@@ -95,6 +95,7 @@ public class MainActivity extends ActionBarActivity {
             favorites.add(Integer.parseInt(favs[i]));
         //We're only calling this on init, so
         //don't reload favadapter, this'll be done in time.
+        ShowHideFavorites();
     }
 
     void SaveFavorites() {
@@ -112,12 +113,14 @@ public class MainActivity extends ActionBarActivity {
         favorites.add(id);
         SaveFavorites();
         ReloadFavadapter();
+        ShowHideFavorites();
     }
 
     void RemoveFavorite(Integer id) {
         favorites.remove(id);
         SaveFavorites();
         ReloadFavadapter();
+        ShowHideFavorites();
     }
 
     //Filters parkings from adapter into favadapter according to favorites
@@ -129,6 +132,11 @@ public class MainActivity extends ActionBarActivity {
         }
         favadapter.sort();
         favadapter.notifyDataSetChanged();
+    }
+
+    //Favorites are the first pane, but when there are none we want to go straight to full list
+    void ShowHideFavorites() {
+        mSectionsPagerAdapter.SetFavoritesVisible(favorites.size() != 0);
     }
 
     JSONObject[] parkings;
@@ -238,26 +246,49 @@ public class MainActivity extends ActionBarActivity {
      * one of the sections/tabs/pages.
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
+        private ArrayList<Fragment> views = new ArrayList<Fragment>();
+
+        ParkingListFragment viewFavorites = new ParkingListFragment(ParkingListFragment.FRAGMENT_FAVORITES);
+        ParkingListFragment viewAll = new ParkingListFragment(ParkingListFragment.FRAGMENT_ALL);
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
+            views.add(viewFavorites);
+            views.add(viewAll);
         }
 
         @Override
         public int getCount() {
-            return 2;
+            return views.size();
         }
 
         @Override
         public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            switch (position) {
-                case 0:
-                    return new PlaceholderFragment(PlaceholderFragment.FRAGMENT_FAVORITES);
-                case 1:
-                    return new PlaceholderFragment(PlaceholderFragment.FRAGMENT_ALL);
+            return views.get(position);
+        }
+
+        //Clients call this on notifyDataSetChanged() to determine which items are now where.
+        //Inherited implementation returns POSITION_UNCHANGED for all items, but we have to tell
+        //clients that some items have actually been removed.
+        @Override
+        public int getItemPosition(Object item) {
+            int position = views.indexOf(item);
+            if (position >= 0) {
+                return position;
+            } else {
+                return POSITION_NONE;
             }
-            return null;
+        }
+
+        public void SetFavoritesVisible(boolean value) {
+            if (value && ! views.contains(viewFavorites)) {
+                views.add(0, viewFavorites);
+                notifyDataSetChanged();
+            } else
+            if (!value && views.contains(viewFavorites)){
+                views.remove(viewFavorites);
+                notifyDataSetChanged();
+            }
         }
 
         @Override
@@ -276,14 +307,14 @@ public class MainActivity extends ActionBarActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public class PlaceholderFragment extends Fragment {
+    public class ParkingListFragment extends Fragment {
         public static final int FRAGMENT_ALL        = 0;
         public static final int FRAGMENT_FAVORITES  = 1;
 
         int fragmentType;
         ListViewAdapter adapter;
 
-        public PlaceholderFragment(int fragmentType) {
+        public ParkingListFragment(int fragmentType) {
             super();
             this.fragmentType = fragmentType;
         }
@@ -296,10 +327,10 @@ public class MainActivity extends ActionBarActivity {
             MainActivity activity = (MainActivity)this.getActivity();
             switch (this.fragmentType) {
                 case FRAGMENT_ALL:
-                    PlaceholderFragment.this.adapter = activity.adapter;
+                    ParkingListFragment.this.adapter = activity.adapter;
                     break;
                 case FRAGMENT_FAVORITES:
-                    PlaceholderFragment.this.adapter = activity.favadapter;
+                    ParkingListFragment.this.adapter = activity.favadapter;
                     break;
             }
 
@@ -309,7 +340,7 @@ public class MainActivity extends ActionBarActivity {
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(PlaceholderFragment.this.getActivity(),
+                    Toast.makeText(ParkingListFragment.this.getActivity(),
                             adapter.list.get(position).name, Toast.LENGTH_SHORT).show();
                 }
             });
@@ -367,14 +398,14 @@ public class MainActivity extends ActionBarActivity {
 
             switch(item.getItemId()) {
                 case R.id.action_add_to_favorites:
-                    entry = PlaceholderFragment.this.adapter.list.get(info.position);
+                    entry = ParkingListFragment.this.adapter.list.get(info.position);
                     if (entry != null) {
                         AddFavorite(entry.id);
                         Toast.makeText(MainActivity.this, "Added", Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 case R.id.action_remove_from_favorites:
-                    entry = PlaceholderFragment.this.adapter.list.get(info.position);
+                    entry = ParkingListFragment.this.adapter.list.get(info.position);
                     if (entry != null) {
                         RemoveFavorite(entry.id);
                         Toast.makeText(MainActivity.this, "Removed", Toast.LENGTH_SHORT).show();
