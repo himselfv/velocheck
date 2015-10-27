@@ -28,6 +28,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -51,11 +52,12 @@ public class MainActivity extends ActionBarActivity {
      */
     ViewPager mViewPager;
 
+    public ListViewAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -65,10 +67,12 @@ public class MainActivity extends ActionBarActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
+        this.adapter = new ListViewAdapter(this);
+
         UpdateParkings();
     }
 
-    JSONObject parkings;
+    JSONObject[] parkings;
 
     class RetrieveParkingsTask extends  AsyncTask<String, Void, JSONObject> {
         private Exception exception;
@@ -95,16 +99,38 @@ public class MainActivity extends ActionBarActivity {
             }
         }
 
-        protected void onPostExecute(JSONObject new_parkings) {
+        protected void onPostExecute(JSONObject json) {
             if (this.exception != null) {
                 Toast.makeText(MainActivity.this, "Cannot update parkings: "
                         + this.exception.getMessage(), Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            parkings = new_parkings;
+            adapter.clear();
+            try {
+
+                JSONArray parking_list = json.getJSONArray("Items");
+                JSONObject[] new_parkings = new JSONObject[parking_list.length()];
+                for (int i=0; i < parking_list.length(); i++) {
+                    JSONObject parking = parking_list.getJSONObject(i);
+                    new_parkings[i] = parking;
+                    adapter.addItem(
+                        parking.getString("Address"),
+                        Integer.toString(parking.getInt("FreePlaces")) + " / " + Integer.toString(parking.getInt("TotalPlaces"))
+                        );
+                }
+
+                parkings = new_parkings;
+            }
+            catch (JSONException e) {
+                Toast.makeText(MainActivity.this, "Cannot update parkings: "
+                        + this.exception.getMessage(), Toast.LENGTH_SHORT).show();
+                return;
+            }
+            adapter.sort();
+            adapter.notifyDataSetChanged();
+
             Toast.makeText(MainActivity.this, "Updated.", Toast.LENGTH_SHORT).show();
-            //TODO: Update UI
         }
     }
 
@@ -207,22 +233,23 @@ public class MainActivity extends ActionBarActivity {
         public PlaceholderFragment() {
         }
 
+        ListViewAdapter adapter;
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-            ListView listView = (ListView)rootView.findViewById(R.id.listView1);
-            ListViewAdapter adapter = new ListViewAdapter(this.getActivity());
-            listView.setAdapter(adapter);
+            adapter = (ListViewAdapter)((MainActivity)this.getActivity()).adapter;
 
-            adapter.addItem("Item1", "Value1");
-            adapter.addItem("Item2", "Value2");
+            ListView listView = (ListView)rootView.findViewById(R.id.listView1);
+            listView.setAdapter(adapter);
 
             listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(PlaceholderFragment.this.getActivity(), Integer.toString(position+1), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PlaceholderFragment.this.getActivity(),
+                            adapter.list.get(position).name, Toast.LENGTH_SHORT).show();
                 }
             });
 

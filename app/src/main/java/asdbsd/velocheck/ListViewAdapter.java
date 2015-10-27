@@ -8,12 +8,17 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import asdbsd.velocheck.R;
 
-class ListViewEntry {
+class ListViewEntry implements Comparable<ListViewEntry> {
     String name;
     String status;
+    @Override
+    public int compareTo(ListViewEntry other) {
+        return this.name.compareTo(other.name);
+    }
 }
 
 public class ListViewAdapter extends BaseAdapter {
@@ -41,11 +46,19 @@ public class ListViewAdapter extends BaseAdapter {
         return 0;
     }
 
+    public void clear() {
+        list.clear();
+    }
+
     public void addItem(String name, String status) {
         ListViewEntry entry = new ListViewEntry();
         entry.name = name;
         entry.status = status;
         list.add(entry);
+    }
+
+    public void sort() {
+        Collections.sort(this.list);
     }
 
     @Override
