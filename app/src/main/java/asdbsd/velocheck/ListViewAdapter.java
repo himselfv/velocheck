@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -13,8 +14,17 @@ import java.util.Collections;
 import asdbsd.velocheck.R;
 
 class ListViewEntry implements Comparable<ListViewEntry> {
+    Integer id;
     String name;
     String status;
+
+    public ListViewEntry(Integer id, String name, String status) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.status = status;
+    }
+
     @Override
     public int compareTo(ListViewEntry other) {
         return this.name.compareTo(other.name);
@@ -50,10 +60,7 @@ public class ListViewAdapter extends BaseAdapter {
         list.clear();
     }
 
-    public void addItem(String name, String status) {
-        ListViewEntry entry = new ListViewEntry();
-        entry.name = name;
-        entry.status = status;
+    public void addItem(ListViewEntry entry) {
         list.add(entry);
     }
 
