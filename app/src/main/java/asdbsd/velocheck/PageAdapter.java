@@ -83,11 +83,14 @@ public class PageAdapter extends FragmentPagerAdapter {
             if (!visiblePages.contains(page)) {
                 int insertPosition = getVisiblePageInsertPosition(page);
                 visiblePages.add(insertPosition, page);
+                // shift the ID returned by getItemId outside the range of all previous fragments
+                baseId += 2*pages.size();
                 this.notifyDataSetChanged();
             }
         } else {
             if (visiblePages.contains(page)) {
                 visiblePages.remove(page);
+                baseId += 2*pages.size();
                 this.notifyDataSetChanged();
             }
         }
@@ -110,12 +113,21 @@ public class PageAdapter extends FragmentPagerAdapter {
     //clients that some items have actually been removed.
     @Override
     public int getItemPosition(Object item) {
-        int position = visiblePages.indexOf(item);
+        return POSITION_NONE;
+        /*int position = visiblePages.indexOf(item);
         if (position >= 0) {
             return position;
         } else {
             return POSITION_NONE;
-        }
+        }*/
+    }
+
+    private long baseId = 0;
+
+    @Override
+    public long getItemId(int position) {
+        // give an ID different from position when position has been changed
+        return baseId + position;
     }
 
     @Override
