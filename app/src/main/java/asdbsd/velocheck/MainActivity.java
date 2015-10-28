@@ -349,11 +349,11 @@ public class MainActivity extends ActionBarActivity {
 
             pageFavorites = this.addFragmentPage(new ParkingListFragment(ParkingListFragment.FRAGMENT_FAVORITES));
             pageFavorites.title = getString(R.string.title_section_favorites).toUpperCase(l);
-            pageFavorites.icon = getDrawable(R.drawable.ic_favorites_48);
+            pageFavorites.icon = getResources().getDrawable(R.drawable.ic_favorites_48);
 
             pageAll = this.addFragmentPage(new ParkingListFragment(ParkingListFragment.FRAGMENT_ALL));
             pageAll.title = getString(R.string.title_section_all).toUpperCase(l);
-            pageAll.icon = getDrawable(R.drawable.ic_list_48);
+            pageAll.icon = getResources().getDrawable(R.drawable.ic_list_48);
         }
 
         public void SetFavoritesVisible(boolean value) {
