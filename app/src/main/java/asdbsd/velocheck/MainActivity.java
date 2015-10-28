@@ -6,20 +6,25 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
 
+//import android.app.ActionBar;
+import android.app.FragmentTransaction;
 import android.content.SharedPreferences;
+import android.database.DataSetObserver;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.os.Bundle;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
+import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -42,6 +47,11 @@ import org.json.JSONObject;
 public class MainActivity extends ActionBarActivity {
 
     /**
+     * Pager control.
+     */
+    ViewPager mViewPager;
+
+    /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
      * {@link FragmentPagerAdapter} derivative, which will keep every
@@ -51,15 +61,8 @@ public class MainActivity extends ActionBarActivity {
      */
     SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
-    ViewPager mViewPager;
-
     public ListViewAdapter adapter;
     public ListViewAdapter favadapter;
-
-    ArrayList<Integer> favorites;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,10 +72,16 @@ public class MainActivity extends ActionBarActivity {
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter.registerDataSetObserver(this.mPageListChangeListener);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOnPageChangeListener(mPageChangeListener);
+
+        actionBar = getSupportActionBar();
+        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        //Each Tab will bind to a TabListener later
 
         this.adapter = new ListViewAdapter(this);
         this.favadapter = new ListViewAdapter(this);
@@ -81,7 +90,88 @@ public class MainActivity extends ActionBarActivity {
         LoadFavorites();
 
         UpdateParkings();
+        ReloadTabs(); //TODO: Not here but when the page list changes
     }
+
+
+    /*  Page change listener. Called when the selected page changes in the ViewPager  */
+    ViewPager.OnPageChangeListener mPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
+        @Override
+        public void onPageSelected(int position) {
+            Object page = mSectionsPagerAdapter.getItem(position);
+            ActionBar.Tab tab = actionBar.getSelectedTab();
+            //Take care to avoid infinite loop
+            if ((tab == null) || (tab.getTag() != page)) {
+                for (int i = 0; i < actionBar.getTabCount(); i++)
+                    if (actionBar.getTabAt(i).getTag() == page) {
+                        actionBar.setSelectedNavigationItem(i);
+                        break;
+                    }
+            }
+        }
+    };
+
+    /*  Page list change listener. Called when the list of available / visible pages changes.
+       This is simply an adapter notification because why invent the wheel. */
+    DataSetObserver mPageListChangeListener = new DataSetObserver() {
+        @Override
+        public void onChanged() {
+            //Called when the list of tabs is changed
+            ReloadTabs();
+        }
+
+        @Override
+        public void onInvalidated() {
+            //Called when the list of tabs becomes invalid for whatever reason
+            ClearTabs();
+        }
+    };
+
+
+    /*  Tab control listener. Called when the user changes tabs.  */
+    ActionBar actionBar;
+    ActionBar.TabListener tabListener = new ActionBar.TabListener() {
+        public void onTabSelected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+            // switched to a different tab -- open associated fragment
+            Object tag = tab.getTag();
+            for (int i = 0; i < mSectionsPagerAdapter.visiblePages.size(); i++)
+                if (mSectionsPagerAdapter.visiblePages.get(i) == tag)
+                    if (mViewPager.getCurrentItem() != i)
+                        mViewPager.setCurrentItem(i);
+        }
+
+        public void onTabUnselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+            // switched to other tab -- will react in onTabSelected() for that tab
+        }
+
+        public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
+            // user clicked the already selected tab again. Whatever.
+        }
+    };
+
+    void ClearTabs() {
+        actionBar.removeAllTabs();
+    }
+
+    //Called when the page list has changed and tab list needs to be reloaded
+    void ReloadTabs() {
+        actionBar.removeAllTabs();
+        for (int i = 0; i < mSectionsPagerAdapter.visiblePages.size(); i ++) {
+            PageAdapter.Page page = mSectionsPagerAdapter.visiblePages.get(i);
+            ActionBar.Tab tab = actionBar.newTab();
+            tab.setText(page.title);
+            tab.setIcon(page.icon);
+            tab.setTag(page);
+            tab.setTabListener(this.tabListener);
+            actionBar.addTab(tab);
+        }
+    }
+
+
+
+    /*  Favorites  */
+
+    ArrayList<Integer> favorites; // a list of parking ids
 
     void LoadFavorites() {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
@@ -138,6 +228,9 @@ public class MainActivity extends ActionBarActivity {
     void ShowHideFavorites() {
         mSectionsPagerAdapter.SetFavoritesVisible(favorites.size() != 0);
     }
+
+
+    /*  Parkings list  */
 
     JSONObject[] parkings;
 
@@ -205,13 +298,14 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-
     protected void UpdateParkings() {
         Toast.makeText(MainActivity.this, "Querying parkings...", Toast.LENGTH_SHORT).show();
         String queryUrl = "http://velobike.ru/proxy/parkings/";
         new RetrieveParkingsTask().execute(queryUrl);
     }
 
+
+    /*  Options menu   */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -245,63 +339,27 @@ public class MainActivity extends ActionBarActivity {
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
      */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-        private ArrayList<Fragment> views = new ArrayList<Fragment>();
-
-        ParkingListFragment viewFavorites = new ParkingListFragment(ParkingListFragment.FRAGMENT_FAVORITES);
-        ParkingListFragment viewAll = new ParkingListFragment(ParkingListFragment.FRAGMENT_ALL);
+    public class SectionsPagerAdapter extends PageAdapter {
+        Page pageFavorites;
+        Page pageAll;
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
-            views.add(viewFavorites);
-            views.add(viewAll);
-        }
+            Locale l = Locale.getDefault();
 
-        @Override
-        public int getCount() {
-            return views.size();
-        }
+            pageFavorites = this.addFragmentPage(new ParkingListFragment(ParkingListFragment.FRAGMENT_FAVORITES));
+            pageFavorites.title = getString(R.string.title_section_favorites).toUpperCase(l);
+            pageFavorites.icon = getDrawable(R.drawable.ic_favorites_48);
 
-        @Override
-        public Fragment getItem(int position) {
-            return views.get(position);
-        }
-
-        //Clients call this on notifyDataSetChanged() to determine which items are now where.
-        //Inherited implementation returns POSITION_UNCHANGED for all items, but we have to tell
-        //clients that some items have actually been removed.
-        @Override
-        public int getItemPosition(Object item) {
-            int position = views.indexOf(item);
-            if (position >= 0) {
-                return position;
-            } else {
-                return POSITION_NONE;
-            }
+            pageAll = this.addFragmentPage(new ParkingListFragment(ParkingListFragment.FRAGMENT_ALL));
+            pageAll.title = getString(R.string.title_section_all).toUpperCase(l);
+            pageAll.icon = getDrawable(R.drawable.ic_list_48);
         }
 
         public void SetFavoritesVisible(boolean value) {
-            if (value && ! views.contains(viewFavorites)) {
-                views.add(0, viewFavorites);
-                notifyDataSetChanged();
-            } else
-            if (!value && views.contains(viewFavorites)){
-                views.remove(viewFavorites);
-                notifyDataSetChanged();
-            }
+            pageFavorites.setVisible(value);
         }
 
-        @Override
-        public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_section_favorites).toUpperCase(l);
-                case 1:
-                    return getString(R.string.title_section_all).toUpperCase(l);
-            }
-            return null;
-        }
     }
 
     /**
