@@ -49,6 +49,7 @@ public class MainActivity extends ActionBarActivity {
     PageAdapter mSectionsPagerAdapter;
     PageAdapter.Page pageFavorites;
     PageAdapter.Page pageAll;
+    PageAdapter.Page pageMap;
 
     public ListViewAdapter adapter;
     public ListViewAdapter favadapter;
@@ -76,6 +77,10 @@ public class MainActivity extends ActionBarActivity {
         pageAll = mSectionsPagerAdapter.addFragmentPage(new AllParkingsFragment(MainActivity.this.adapter));
         pageAll.title = getString(R.string.title_section_all).toUpperCase(l);
         pageAll.icon = getResources().getDrawable(R.drawable.ic_list_32);
+
+        pageMap = mSectionsPagerAdapter.addFragmentPage(new MapFragment(MainActivity.this.adapter));
+        pageMap.title = getString(R.string.title_section_map).toUpperCase(l);
+        pageMap.icon = getResources().getDrawable(R.drawable.ic_map_32);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -324,11 +329,6 @@ public class MainActivity extends ActionBarActivity {
 
         if (id == R.id.action_update) {
             UpdateParkings();
-            return true;
-        }
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
             return true;
         }
 
