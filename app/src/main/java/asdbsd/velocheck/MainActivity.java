@@ -74,6 +74,9 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        this.adapter = new ListViewAdapter(this);
+        this.favadapter = new ListViewAdapter(this);
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -88,10 +91,7 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayShowHomeEnabled(false);
-        //Each Tab will bind to a TabListener later
-
-        this.adapter = new ListViewAdapter(this);
-        this.favadapter = new ListViewAdapter(this);
+        ReloadTabs(); //Each Tab will bind to a TabListener
 
         this.favorites = new ArrayList<Integer>();
         LoadFavorites();
