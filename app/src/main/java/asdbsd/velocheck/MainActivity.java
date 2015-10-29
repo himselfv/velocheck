@@ -100,7 +100,7 @@ public class MainActivity extends ActionBarActivity {
     ViewPager.OnPageChangeListener mPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
-            Object page = mSectionsPagerAdapter.getItem(position);
+            Object page = mSectionsPagerAdapter.visiblePages.get(position);
             ActionBar.Tab tab = actionBar.getSelectedTab();
             //Take care to avoid infinite loop
             if ((tab == null) || (tab.getTag() != page)) {
