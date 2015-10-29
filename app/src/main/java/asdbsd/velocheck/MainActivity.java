@@ -64,7 +64,9 @@ public class MainActivity extends ActionBarActivity {
      * may be best to switch to a
      * {@link android.support.v4.app.FragmentStatePagerAdapter}.
      */
-    SectionsPagerAdapter mSectionsPagerAdapter;
+    PageAdapter mSectionsPagerAdapter;
+    PageAdapter.Page pageFavorites;
+    PageAdapter.Page pageAll;
 
     public ListViewAdapter adapter;
     public ListViewAdapter favadapter;
@@ -74,13 +76,24 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Create the list adapters for pages
         this.adapter = new ListViewAdapter(this);
         this.favadapter = new ListViewAdapter(this);
 
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        // Create the adapter that will return a fragment for each page
+        mSectionsPagerAdapter = new PageAdapter(getSupportFragmentManager());
         mSectionsPagerAdapter.registerDataSetObserver(this.mPageListChangeListener);
+
+        //Add some pages
+        Locale l = Locale.getDefault();
+
+        pageFavorites = mSectionsPagerAdapter.addFragmentPage(new ParkingListFragment(MainActivity.this.favadapter));
+        pageFavorites.title = getString(R.string.title_section_favorites).toUpperCase(l);
+        pageFavorites.icon = getResources().getDrawable(R.drawable.ic_favorites_32);
+
+        pageAll = mSectionsPagerAdapter.addFragmentPage(new ParkingListFragment(MainActivity.this.adapter));
+        pageAll.title = getString(R.string.title_section_all).toUpperCase(l);
+        pageAll.icon = getResources().getDrawable(R.drawable.ic_list_32);
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -232,7 +245,7 @@ public class MainActivity extends ActionBarActivity {
 
     //Favorites are the first pane, but when there are none we want to go straight to full list
     void ShowHideFavorites() {
-        mSectionsPagerAdapter.SetFavoritesVisible(favorites.size() != 0);
+        pageFavorites.setVisible(favorites.size() != 0);
     }
 
 
@@ -340,145 +353,5 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends PageAdapter {
-        Page pageFavorites;
-        Page pageAll;
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-            Locale l = Locale.getDefault();
-
-            pageFavorites = this.addFragmentPage(new ParkingListFragment(ParkingListFragment.FRAGMENT_FAVORITES));
-            pageFavorites.title = getString(R.string.title_section_favorites).toUpperCase(l);
-            pageFavorites.icon = getResources().getDrawable(R.drawable.ic_favorites_48);
-
-            pageAll = this.addFragmentPage(new ParkingListFragment(ParkingListFragment.FRAGMENT_ALL));
-            pageAll.title = getString(R.string.title_section_all).toUpperCase(l);
-            pageAll.icon = getResources().getDrawable(R.drawable.ic_list_48);
-        }
-
-        public void SetFavoritesVisible(boolean value) {
-            pageFavorites.setVisible(value);
-        }
-
-    }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    public class ParkingListFragment extends Fragment {
-        public static final int FRAGMENT_ALL        = 0;
-        public static final int FRAGMENT_FAVORITES  = 1;
-
-        int fragmentType;
-        ListViewAdapter adapter;
-
-        public ParkingListFragment(int fragmentType) {
-            super();
-            this.fragmentType = fragmentType;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-            MainActivity activity = (MainActivity)this.getActivity();
-            switch (this.fragmentType) {
-                case FRAGMENT_ALL:
-                    ParkingListFragment.this.adapter = activity.adapter;
-                    break;
-                case FRAGMENT_FAVORITES:
-                    ParkingListFragment.this.adapter = activity.favadapter;
-                    break;
-            }
-
-            ListView listView = (ListView)rootView.findViewById(R.id.listView1);
-            listView.setAdapter(adapter);
-
-            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Toast.makeText(ParkingListFragment.this.getActivity(),
-                            adapter.list.get(position).name, Toast.LENGTH_SHORT).show();
-                }
-            });
-
-            registerForContextMenu(listView); //propagate events to this parent object
-            return rootView;
-        }
-
-        @Override
-        public void onCreateContextMenu(final ContextMenu menu,
-                                        final View v, final ContextMenuInfo menuInfo) {
-            super.onCreateContextMenu(menu, v, menuInfo);
-            if (v.getId()==R.id.listView1) {
-
-                MenuInflater inflater = getMenuInflater();
-                inflater.inflate(R.menu.menu_list, menu);
-
-                //Retrieve selected item
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-                ListViewEntry entry = adapter.list.get(info.position);
-                if (entry == null) return;
-
-                //Depending on the selected item, show or hide menu items
-                MenuItem addToFavorites = menu.findItem(R.id.action_add_to_favorites);
-                MenuItem removeFromFavorites = menu.findItem(R.id.action_remove_from_favorites);
-
-                if (favorites.contains(entry.id)) {
-                    addToFavorites.setVisible(false);
-                    removeFromFavorites.setVisible(true);
-                } else {
-                    addToFavorites.setVisible(true);
-                    removeFromFavorites.setVisible(false);
-                }
-
-                //Somehow onContextItemSelected fires in an incorrect Fragment, so use this
-                //http://stackoverflow.com/questions/29195764/oncontextitemselected-is-not-called-in-fragment
-                OnMenuItemClickListener listener = new OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem item) {
-                        onMenuItemSelected(item);
-                        return true;
-                    }
-                };
-
-                for (int i = 0, n = menu.size(); i < n; i++)
-                    menu.getItem(i).setOnMenuItemClickListener(listener);
-            }
-        }
-
-        public boolean onMenuItemSelected(MenuItem item) {
-            //Retrieve selected item
-            AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-
-            ListViewEntry entry;
-
-            switch(item.getItemId()) {
-                case R.id.action_add_to_favorites:
-                    entry = ParkingListFragment.this.adapter.list.get(info.position);
-                    if (entry != null) {
-                        AddFavorite(entry.id);
-                        Toast.makeText(MainActivity.this, "Added", Toast.LENGTH_SHORT).show();
-                    }
-                    return true;
-                case R.id.action_remove_from_favorites:
-                    entry = ParkingListFragment.this.adapter.list.get(info.position);
-                    if (entry != null) {
-                        RemoveFavorite(entry.id);
-                        Toast.makeText(MainActivity.this, "Removed", Toast.LENGTH_SHORT).show();
-                    }
-                    return true;
-            }
-            return super.onContextItemSelected(item);
-        }
-
-    }
 
 }

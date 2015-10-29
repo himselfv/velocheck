@@ -4,7 +4,7 @@
     <string name="title_section_favorites">Favorites</string>
     <string name="title_section_all">All</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="filter_hint">Filter</string>
 
     <string name="action_update">Update</string>
     <string name="action_settings">Settings</string>
