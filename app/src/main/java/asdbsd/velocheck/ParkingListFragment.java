@@ -1,6 +1,5 @@
 package asdbsd.velocheck;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -33,35 +32,21 @@ public class ParkingListFragment extends Fragment {
         this.adapter = adapter;
     }
 
+    //Override this in children to only override the inflation
+    protected View createView(LayoutInflater inflater, ViewGroup container,
+                              Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_parkinglist, container, false);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View rootView = createView(inflater, container, savedInstanceState);
 
         activity = (MainActivity) this.getActivity();
 
         ListView listView = (ListView)rootView.findViewById(R.id.listView1);
         listView.setAdapter(adapter);
-
-        EditText editFilter = (EditText)rootView.findViewById(R.id.edit_filter);
-        editFilter.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                adapter.getFilter().filter(s);
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-        editFilter.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                return false;
-            }
-        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

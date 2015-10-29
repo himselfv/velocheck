@@ -69,11 +69,11 @@ public class MainActivity extends ActionBarActivity {
         //Add some pages
         Locale l = Locale.getDefault();
 
-        pageFavorites = mSectionsPagerAdapter.addFragmentPage(new ParkingListFragment(MainActivity.this.favadapter));
+        pageFavorites = mSectionsPagerAdapter.addFragmentPage(new FavoritesFragment(MainActivity.this.favadapter));
         pageFavorites.title = getString(R.string.title_section_favorites).toUpperCase(l);
         pageFavorites.icon = getResources().getDrawable(R.drawable.ic_favorites_32);
 
-        pageAll = mSectionsPagerAdapter.addFragmentPage(new ParkingListFragment(MainActivity.this.adapter));
+        pageAll = mSectionsPagerAdapter.addFragmentPage(new AllParkingsFragment(MainActivity.this.adapter));
         pageAll.title = getString(R.string.title_section_all).toUpperCase(l);
         pageAll.icon = getResources().getDrawable(R.drawable.ic_list_32);
 
