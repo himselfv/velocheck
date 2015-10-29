@@ -81,6 +81,8 @@ public class MainActivity extends ActionBarActivity {
 
         actionBar = getSupportActionBar();
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayShowHomeEnabled(false);
         //Each Tab will bind to a TabListener later
 
         this.adapter = new ListViewAdapter(this);
