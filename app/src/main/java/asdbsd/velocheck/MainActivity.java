@@ -21,6 +21,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +35,8 @@ import org.json.JSONObject;
 
 //TODO: Fix bugs with page hiding / showing
 //TODO: Fav icon to the left of each item
-//TODO: Google MapView
+//TODO: Google MapView - test that the map is updated dynamically on reload when already created
+//TODO: Google MapView - right click
 //TODO: Instantiate Fragments properly, reloading the data (or it crashes when the phone is rotated)
 
 public class MainActivity extends ActionBarActivity {
@@ -78,9 +86,31 @@ public class MainActivity extends ActionBarActivity {
         pageAll.title = getString(R.string.title_section_all).toUpperCase(l);
         pageAll.icon = getResources().getDrawable(R.drawable.ic_list_32);
 
-        pageMap = mSectionsPagerAdapter.addFragmentPage(new MapFragment(MainActivity.this.adapter));
+        pageMap = mSectionsPagerAdapter.addFragmentPage(new SupportMapFragment());  //new MapFragment(MainActivity.this.adapter)
         pageMap.title = getString(R.string.title_section_map).toUpperCase(l);
         pageMap.icon = getResources().getDrawable(R.drawable.ic_map_32);
+
+        final LatLng MOSCOW = new LatLng(55.751244, 37.618423);
+        ((SupportMapFragment)pageMap.fragment).getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MOSCOW, 10));
+                PopulateMap(googleMap);
+                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+                    @Override
+                    public void onMapLongClick(LatLng latLng) {
+
+                    }
+                });
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        return false;
+                    }
+                });
+            }
+        });
+
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -298,6 +328,7 @@ public class MainActivity extends ActionBarActivity {
             adapter.sort();
             adapter.notifyDataSetChanged();
 
+            ReloadMapMarkers();
             ReloadFavadapter();
 
             Toast.makeText(MainActivity.this, "Updated.", Toast.LENGTH_SHORT).show();
@@ -308,6 +339,37 @@ public class MainActivity extends ActionBarActivity {
         Toast.makeText(MainActivity.this, "Querying parkings...", Toast.LENGTH_SHORT).show();
         String queryUrl = "http://velobike.ru/proxy/parkings/";
         new RetrieveParkingsTask().execute(queryUrl);
+    }
+
+    protected void ReloadMapMarkers() {
+        GoogleMap googleMap = ((SupportMapFragment) pageMap.fragment).getMap();
+        if (googleMap != null) {
+            PopulateMap(googleMap);
+        } //otherwise it will probably be populated in the default getMapAsync... I think
+    }
+
+    //Call when map is available
+    protected void PopulateMap(GoogleMap googleMap) {
+        try {
+            googleMap.clear();
+            if (parkings == null) return; //will be called when update finished
+            for (int i = 0; i < parkings.length; i++) {
+                MarkerOptions marker = new MarkerOptions();
+                JSONObject parking = parkings[i];
+                JSONObject pos = parking.getJSONObject("Position");
+                double lat = pos.getDouble("Lat");
+                double lon = pos.getDouble("Lon");
+                marker.position(new LatLng(lat, lon));
+                marker.title(parking.getString("Id"));
+                marker.snippet(Integer.toString(parking.getInt("FreePlaces")) + " / "
+                        + Integer.toString(parking.getInt("TotalPlaces")));
+                googleMap.addMarker(marker);
+            }
+        } catch (JSONException e) {
+            Toast.makeText(MainActivity.this, "Cannot update map: "
+                    + e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
     }
 
 
