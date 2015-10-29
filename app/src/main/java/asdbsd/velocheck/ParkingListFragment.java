@@ -67,7 +67,7 @@ public class ParkingListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(ParkingListFragment.this.getActivity(),
-                        adapter.list.get(position).name, Toast.LENGTH_SHORT).show();
+                        adapter.filteredList.get(position).name, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -86,7 +86,7 @@ public class ParkingListFragment extends Fragment {
 
             //Retrieve selected item
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            ListViewEntry entry = adapter.list.get(info.position);
+            ListViewEntry entry = adapter.filteredList.get(info.position);
             if (entry == null) return;
 
             //Depending on the selected item, show or hide menu items
@@ -124,14 +124,14 @@ public class ParkingListFragment extends Fragment {
 
         switch(item.getItemId()) {
             case R.id.action_add_to_favorites:
-                entry = ParkingListFragment.this.adapter.list.get(info.position);
+                entry = ParkingListFragment.this.adapter.filteredList.get(info.position);
                 if (entry != null) {
                     activity.AddFavorite(entry.id);
                     Toast.makeText(activity, "Added", Toast.LENGTH_SHORT).show();
                 }
                 return true;
             case R.id.action_remove_from_favorites:
-                entry = ParkingListFragment.this.adapter.list.get(info.position);
+                entry = ParkingListFragment.this.adapter.filteredList.get(info.position);
                 if (entry != null) {
                     activity.RemoveFavorite(entry.id);
                     Toast.makeText(activity, "Removed", Toast.LENGTH_SHORT).show();

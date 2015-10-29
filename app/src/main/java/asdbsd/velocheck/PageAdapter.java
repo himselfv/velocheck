@@ -13,7 +13,6 @@ public class PageAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
-
     /*  Pages  */
 
     public class Page {

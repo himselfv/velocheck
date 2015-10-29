@@ -32,7 +32,7 @@ class ListViewEntry implements Comparable<ListViewEntry> {
 
 public class ListViewAdapter extends BaseAdapter implements Filterable {
     public ArrayList<ListViewEntry> list = new ArrayList<ListViewEntry>();
-    private ArrayList<ListViewEntry> filteredList = new ArrayList<ListViewEntry>();
+    public ArrayList<ListViewEntry> filteredList = new ArrayList<ListViewEntry>();
     Activity activity;
 
     public ListViewAdapter(Activity activity) {
