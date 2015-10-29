@@ -28,8 +28,8 @@ import org.json.JSONObject;
 
 //TODO: Fix bugs with page hiding / showing
 //TODO: Fav icon to the left of each item
-//TODO: Text filter control
 //TODO: Google MapView
+//TODO: Instantiate Fragments properly, reloading the data (or it crashes when the phone is rotated)
 
 public class MainActivity extends ActionBarActivity {
 
