@@ -44,6 +44,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 
+//TODO: Fix bugs with page hiding / showing
+//TODO: Fav icon to the left of each item
+//TODO: Text filter control
+//TODO: Google MapView
+
 public class MainActivity extends ActionBarActivity {
 
     /**
@@ -92,7 +97,6 @@ public class MainActivity extends ActionBarActivity {
         LoadFavorites();
 
         UpdateParkings();
-        ReloadTabs(); //TODO: Not here but when the page list changes
     }
 
 
