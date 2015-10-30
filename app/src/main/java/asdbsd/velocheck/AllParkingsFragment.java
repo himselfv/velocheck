@@ -12,14 +12,19 @@ import android.widget.TextView;
 
 public class AllParkingsFragment extends ParkingListFragment {
 
-    public AllParkingsFragment(ParkingListAdapter adapter) {
-        super(adapter);
+    public AllParkingsFragment() {
+        super();
     }
 
     @Override
     protected View createView(LayoutInflater inflater, ViewGroup container,
                               Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_allparkings, container, false);
+    }
+
+    @Override
+    protected ParkingListAdapter retrieveAdapter() {
+        return activity.adapter;
     }
 
     @Override

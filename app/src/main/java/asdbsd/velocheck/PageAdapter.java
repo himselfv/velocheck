@@ -13,10 +13,15 @@ public class PageAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
+    interface FragmentConstructor {
+        Fragment createFragment();
+    }
+
     /*  Pages  */
 
     public class Page {
-        Fragment fragment;
+        FragmentConstructor constructor;
+        long id;
         String title;
         Drawable icon;
         private boolean visible;
@@ -35,30 +40,14 @@ public class PageAdapter extends FragmentPagerAdapter {
     protected ArrayList<Page> visiblePages = new ArrayList<Page>();
 
     //These do not call notifyDataSetChanged -- call manually
-    Page addFragmentPage(Fragment fragment) {
+    Page addPage(long id, FragmentConstructor constructor) {
         Page page = new Page();
-        page.fragment = fragment;
+        page.constructor = constructor;
+        page.id = id;
         pages.add(page);
         if (page.visible)
             visiblePages.add(page);
         return page;
-    }
-
-    Page addFragmentPage(Fragment fragment, String title) {
-        Page page = addFragmentPage(fragment);
-        page.title = title;
-        return page;
-    }
-
-    Page removeFragmentPage(Fragment fragment) {
-        for (int i = 0; i < pages.size(); i++)
-            if (pages.get(i).fragment == fragment) {
-                Page page = pages.remove(i);
-                if (visiblePages.contains(page))
-                    visiblePages.remove(page);
-                return page;
-            }
-        return null;
     }
 
 
@@ -102,7 +91,18 @@ public class PageAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return visiblePages.get(position).fragment;
+        Page page = visiblePages.get(position);
+        if (page == null)
+            return null;
+        else {
+            return page.constructor.createFragment();
+        }
+    }
+
+    @Override
+    public long getItemId (int position) {
+        Page page = visiblePages.get(position);
+        return page.id;
     }
 
     //Clients call this on notifyDataSetChanged() to determine which items are now where.

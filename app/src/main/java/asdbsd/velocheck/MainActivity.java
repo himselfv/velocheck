@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -77,39 +78,26 @@ public class MainActivity extends ActionBarActivity {
         //Add some pages
         Locale l = Locale.getDefault();
 
-        pageFavorites = mSectionsPagerAdapter.addFragmentPage(new FavoritesFragment(MainActivity.this.favadapter));
+        pageFavorites = mSectionsPagerAdapter.addPage(1, new PageAdapter.FragmentConstructor() {
+            @Override
+            public Fragment createFragment() { return new FavoritesFragment(); }
+        });
         pageFavorites.title = getString(R.string.title_section_favorites).toUpperCase(l);
         pageFavorites.icon = getResources().getDrawable(R.drawable.ic_favorites_32);
 
-        pageAll = mSectionsPagerAdapter.addFragmentPage(new AllParkingsFragment(MainActivity.this.adapter));
+        pageAll = mSectionsPagerAdapter.addPage(2, new PageAdapter.FragmentConstructor() {
+            @Override
+            public Fragment createFragment() { return new AllParkingsFragment(); }
+        });
         pageAll.title = getString(R.string.title_section_all).toUpperCase(l);
         pageAll.icon = getResources().getDrawable(R.drawable.ic_list_32);
 
-        pageMap = mSectionsPagerAdapter.addFragmentPage(new SupportMapFragment());  //new MapFragment(MainActivity.this.adapter)
+        pageMap = mSectionsPagerAdapter.addPage(3, new PageAdapter.FragmentConstructor() {
+            @Override
+            public Fragment createFragment() { return new MapFragment(); }
+        });
         pageMap.title = getString(R.string.title_section_map).toUpperCase(l);
         pageMap.icon = getResources().getDrawable(R.drawable.ic_map_32);
-
-        final LatLng MOSCOW = new LatLng(55.751244, 37.618423);
-        ((SupportMapFragment)pageMap.fragment).getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MOSCOW, 10));
-                PopulateMap(googleMap);
-                googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                    @Override
-                    public void onMapLongClick(LatLng latLng) {
-
-                    }
-                });
-                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                    @Override
-                    public boolean onMarkerClick(Marker marker) {
-                        return false;
-                    }
-                });
-            }
-        });
-
 
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -304,45 +292,10 @@ public class MainActivity extends ActionBarActivity {
         adapter.sort();
         adapter.notifyDataSetChanged();
 
-        ReloadMapMarkers();
         ReloadFavadapter();
 
         Toast.makeText(MainActivity.this, getString(R.string.parkings_updated), Toast.LENGTH_SHORT).show();
     }
-
-    protected void ReloadMapMarkers() {
-        GoogleMap googleMap = ((SupportMapFragment) pageMap.fragment).getMap();
-        if (googleMap != null) {
-            PopulateMap(googleMap);
-        } //otherwise it will probably be populated in the default getMapAsync... I think
-    }
-
-    //Call when map is available
-    protected void PopulateMap(GoogleMap googleMap) {
-        googleMap.clear();
-        if (parkings.count() == 0) return; //will be called when update finished
-
-        SparseArray<BitmapDescriptor> icons = new SparseArray<>();
-
-        for (int i = 0; i < parkings.count(); i++) {
-            MarkerOptions marker = new MarkerOptions();
-            ParkingList.Parking p = parkings.get(i);
-            marker.position(new LatLng(p.lat, p.lng));
-            marker.title(Integer.toString(p.id));
-            marker.snippet(Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces));
-
-            int icon = p.getStateIconResource();
-            BitmapDescriptor icon_desc = icons.get(icon);
-            if (icon_desc == null) {
-                icon_desc = BitmapDescriptorFactory.fromResource(icon);
-                icons.put(icon, icon_desc);
-            }
-            marker.icon(icon_desc);
-
-            googleMap.addMarker(marker);
-        }
-    }
-
 
     /*  Options menu   */
 

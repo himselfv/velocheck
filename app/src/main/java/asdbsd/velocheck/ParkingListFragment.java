@@ -18,13 +18,12 @@ public class ParkingListFragment extends Fragment {
     MainActivity activity;
     ParkingListAdapter adapter;
 
-    //Pass the source for the list
-    public ParkingListFragment(ParkingListAdapter adapter) {
+    public ParkingListFragment() {
         super();
-        //I know we're supposed to pass data through bundle because Android may destroy
-        //and recreate us and yadda yadda
-        //We're too stupid for that, okay?
-        this.adapter = adapter;
+    }
+
+    protected ParkingListAdapter retrieveAdapter() {
+        return null; //override and ask for proper one from activity
     }
 
     //Override this in children to only override the inflation
@@ -39,6 +38,7 @@ public class ParkingListFragment extends Fragment {
         View rootView = createView(inflater, container, savedInstanceState);
 
         activity = (MainActivity) this.getActivity();
+        this.adapter = retrieveAdapter();
 
         ListView listView = (ListView)rootView.findViewById(R.id.listView1);
         listView.setAdapter(adapter);
