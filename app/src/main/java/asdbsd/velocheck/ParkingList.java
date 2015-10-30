@@ -76,6 +76,8 @@ public class ParkingList {
     private String queryUrl = "http://velobike.ru/proxy/parkings/";
 
     void AsyncUpdate() {
+        for (EventHandler handler : handlers)
+            handler.onBeginUpdate();
         new RetrieveParkingsTask().execute(queryUrl);
     }
 
