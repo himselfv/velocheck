@@ -54,8 +54,16 @@ public class MainActivity extends ActionBarActivity {
     public ListViewAdapter adapter;
     public ListViewAdapter favadapter;
 
+    private boolean initFinished = false; //set by onCreate when initialization is finished
+    private boolean dataReceived = false; //set by parkings if the data has arrived at least once
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        //Start updating right away!
+        //If the data comes earlier, we'll just process at the end of init
+        parkings.addParkingEventHandler(this.parkingListHandler);
+        parkings.AsyncUpdate();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -118,8 +126,9 @@ public class MainActivity extends ActionBarActivity {
         this.favorites = new ArrayList<Integer>();
         LoadFavorites();
 
-        parkings.addParkingEventHandler(this.parkingListHandler);
-        parkings.AsyncUpdate();
+        initFinished = true;
+        if (dataReceived) // might have missed it while init was not finished. Import manually.
+            parkingsUpdated();
     }
 
 
@@ -264,6 +273,9 @@ public class MainActivity extends ActionBarActivity {
 
     ParkingList parkings = new ParkingList();
     ParkingList.EventHandler parkingListHandler = new ParkingList.EventHandler() {
+        //All of this can be called while onCreate is not yet finished.
+        //Do not do anything funny, or check initFinished.
+
         @Override
         public void onBeginUpdate() {
             Toast.makeText(MainActivity.this, getString(R.string.querying_parkings), Toast.LENGTH_SHORT).show();
@@ -271,22 +283,9 @@ public class MainActivity extends ActionBarActivity {
 
         @Override
         public void onUpdateFinished() {
-
-            adapter.clear();
-            for (int i = 0; i < parkings.count(); i++) {
-                ParkingList.Parking p = parkings.get(i);
-                adapter.addItem(new ListViewEntry(
-                    p.id, p.address,
-                    Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces)
-                ));
-            }
-            adapter.sort();
-            adapter.notifyDataSetChanged();
-
-            ReloadMapMarkers();
-            ReloadFavadapter();
-
-            Toast.makeText(MainActivity.this, getString(R.string.parkings_updated), Toast.LENGTH_SHORT).show();
+            dataReceived = true;
+            if (!initFinished) return; //they'll see dataReceived and call parkingsUpdated
+            parkingsUpdated();
         }
 
         @Override
@@ -295,6 +294,25 @@ public class MainActivity extends ActionBarActivity {
                     + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
+
+    //Called when the parking list is updated
+    protected void parkingsUpdated() {
+        adapter.clear();
+        for (int i = 0; i < parkings.count(); i++) {
+            ParkingList.Parking p = parkings.get(i);
+            adapter.addItem(new ListViewEntry(
+                    p.id, p.address,
+                    Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces)
+            ));
+        }
+        adapter.sort();
+        adapter.notifyDataSetChanged();
+
+        ReloadMapMarkers();
+        ReloadFavadapter();
+
+        Toast.makeText(MainActivity.this, getString(R.string.parkings_updated), Toast.LENGTH_SHORT).show();
+    }
 
     protected void ReloadMapMarkers() {
         GoogleMap googleMap = ((SupportMapFragment) pageMap.fragment).getMap();
