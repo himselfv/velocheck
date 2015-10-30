@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="4sp"
+    android:paddingBottom="4sp"
+    android:minHeight="44sp"
+    >
 
     <TextView
         android:id="@+id/name"
@@ -8,15 +13,17 @@
         android:layout_width="0dp"
         android:layout_weight="5"
         android:textSize="16sp"
-        android:minHeight="48sp"
+        android:paddingRight="2sp"
+        android:paddingEnd="2sp"
+        android:paddingStart="4sp"
+        android:paddingLeft="4sp"
+        android:layout_gravity="center_vertical"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/status"
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:textSize="16sp"
+    <ImageView
+        android:id="@+id/status_picture"
+        android:layout_height="40sp"
+        android:layout_width="wrap_content"
         />
 
 </LinearLayout>
