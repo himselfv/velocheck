@@ -12,6 +12,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -322,7 +323,7 @@ public class MainActivity extends ActionBarActivity {
         googleMap.clear();
         if (parkings.count() == 0) return; //will be called when update finished
 
-        HashMap<Integer, BitmapDescriptor> icons = new HashMap<Integer, BitmapDescriptor>();
+        SparseArray<BitmapDescriptor> icons = new SparseArray<BitmapDescriptor>();
 
         for (int i = 0; i < parkings.count(); i++) {
             MarkerOptions marker = new MarkerOptions();
