@@ -1,16 +1,10 @@
 package asdbsd.velocheck;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Locale;
 
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
-import android.os.AsyncTask;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -22,16 +16,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 
 //TODO: Fix bugs with page hiding / showing
 //TODO: Fav icon to the left of each item
@@ -126,7 +113,8 @@ public class MainActivity extends ActionBarActivity {
         this.favorites = new ArrayList<Integer>();
         LoadFavorites();
 
-        UpdateParkings();
+        parkings.addParkingEventHandler(this.parkingListHandler);
+        parkings.AsyncUpdate();
     }
 
 
@@ -213,12 +201,12 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences preferences = getPreferences(MODE_PRIVATE);
         String favStr = preferences.getString("favorites", "");
         String[] favs;
-        if (favStr == "")
+        if (favStr.isEmpty())
             favs = new String[0];
         else
             favs = favStr.split(",");
-        for (int i = 0; i < favs.length; i++)
-            favorites.add(Integer.parseInt(favs[i]));
+        for (String favId : favs)
+            favorites.add(Integer.parseInt(favId));
         //We're only calling this on init, so
         //don't reload favadapter, this'll be done in time.
         ShowHideFavorites();
@@ -268,62 +256,24 @@ public class MainActivity extends ActionBarActivity {
 
     /*  Parkings list  */
 
-    JSONObject[] parkings;
 
-    class RetrieveParkingsTask extends  AsyncTask<String, Void, JSONObject> {
-        private Exception exception;
-
+    ParkingList parkings = new ParkingList();
+    ParkingList.EventHandler parkingListHandler = new ParkingList.EventHandler() {
         @Override
-        protected JSONObject doInBackground(String... queryUrl) {
-            try {
-                URL url = new URL(queryUrl[0]);
-                URLConnection connection = url.openConnection();
-
-                String line;
-                StringBuilder builder = new StringBuilder();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                while ((line = reader.readLine()) != null) {
-                    builder.append(line);
-                }
-
-                String jsonString = builder.toString();
-                return new JSONObject(jsonString);
-            }
-            catch (IOException | JSONException e) {
-                this.exception = e;
-                return null;
-            }
+        public void onBeginUpdate() {
+            Toast.makeText(MainActivity.this, "Querying parkings...", Toast.LENGTH_SHORT).show();
         }
 
-        protected void onPostExecute(JSONObject json) {
-            if (this.exception != null) {
-                Toast.makeText(MainActivity.this, "Cannot update parkings: "
-                        + this.exception.getMessage(), Toast.LENGTH_SHORT).show();
-                return;
-            }
+        @Override
+        public void onUpdateFinished() {
 
             adapter.clear();
-            try {
-                JSONArray parking_list = json.getJSONArray("Items");
-                JSONObject[] new_parkings = new JSONObject[parking_list.length()];
-                for (int i=0; i < parking_list.length(); i++) {
-                    JSONObject parking = parking_list.getJSONObject(i);
-                    new_parkings[i] = parking;
-                    adapter.addItem(
-                        new ListViewEntry(
-                            parking.getInt("Id"),
-                            parking.getString("Address"),
-                            Integer.toString(parking.getInt("FreePlaces")) + " / "
-                                    + Integer.toString(parking.getInt("TotalPlaces"))
-                        ));
-                }
-
-                parkings = new_parkings;
-            }
-            catch (JSONException e) {
-                Toast.makeText(MainActivity.this, "Cannot update parkings: "
-                        + e.getMessage(), Toast.LENGTH_SHORT).show();
-                return;
+            for (int i = 0; i < parkings.count(); i++) {
+                ParkingList.Parking p = parkings.get(i);
+                adapter.addItem(new ListViewEntry(
+                    p.id, p.address,
+                    Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces)
+                ));
             }
             adapter.sort();
             adapter.notifyDataSetChanged();
@@ -333,13 +283,13 @@ public class MainActivity extends ActionBarActivity {
 
             Toast.makeText(MainActivity.this, "Updated.", Toast.LENGTH_SHORT).show();
         }
-    }
 
-    protected void UpdateParkings() {
-        Toast.makeText(MainActivity.this, "Querying parkings...", Toast.LENGTH_SHORT).show();
-        String queryUrl = "http://velobike.ru/proxy/parkings/";
-        new RetrieveParkingsTask().execute(queryUrl);
-    }
+        @Override
+        public void onUpdateFailed(Exception e) {
+            Toast.makeText(MainActivity.this, "Cannot update parkings: "
+                    + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    };
 
     protected void ReloadMapMarkers() {
         GoogleMap googleMap = ((SupportMapFragment) pageMap.fragment).getMap();
@@ -350,25 +300,15 @@ public class MainActivity extends ActionBarActivity {
 
     //Call when map is available
     protected void PopulateMap(GoogleMap googleMap) {
-        try {
-            googleMap.clear();
-            if (parkings == null) return; //will be called when update finished
-            for (int i = 0; i < parkings.length; i++) {
-                MarkerOptions marker = new MarkerOptions();
-                JSONObject parking = parkings[i];
-                JSONObject pos = parking.getJSONObject("Position");
-                double lat = pos.getDouble("Lat");
-                double lon = pos.getDouble("Lon");
-                marker.position(new LatLng(lat, lon));
-                marker.title(parking.getString("Id"));
-                marker.snippet(Integer.toString(parking.getInt("FreePlaces")) + " / "
-                        + Integer.toString(parking.getInt("TotalPlaces")));
-                googleMap.addMarker(marker);
-            }
-        } catch (JSONException e) {
-            Toast.makeText(MainActivity.this, "Cannot update map: "
-                    + e.getMessage(), Toast.LENGTH_SHORT).show();
-            return;
+        googleMap.clear();
+        if (parkings.count() == 0) return; //will be called when update finished
+        for (int i = 0; i < parkings.count(); i++) {
+            MarkerOptions marker = new MarkerOptions();
+            ParkingList.Parking p = parkings.get(i);
+            marker.position(new LatLng(p.lat, p.lng));
+            marker.title(Integer.toString(p.id));
+            marker.snippet(Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces));
+            googleMap.addMarker(marker);
         }
     }
 
@@ -390,7 +330,7 @@ public class MainActivity extends ActionBarActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_update) {
-            UpdateParkings();
+            parkings.AsyncUpdate();
             return true;
         }
 
