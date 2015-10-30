@@ -66,7 +66,7 @@ public class ParkingListFragment extends Fragment {
 
             //Retrieve selected item
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-            ListViewEntry entry = adapter.filteredList.get(info.position);
+            ParkingList.Parking entry = adapter.filteredList.get(info.position);
             if (entry == null) return;
 
             //Depending on the selected item, show or hide menu items
@@ -100,7 +100,7 @@ public class ParkingListFragment extends Fragment {
         //Retrieve selected item
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
 
-        ListViewEntry entry;
+        ParkingList.Parking entry;
 
         switch(item.getItemId()) {
             case R.id.action_add_to_favorites:
