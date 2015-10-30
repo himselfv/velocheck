@@ -2,29 +2,24 @@ package asdbsd.velocheck;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.ContextMenu;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 // Only works with MainActivity because yeah
 
 public class ParkingListFragment extends Fragment {
     MainActivity activity;
-    ListViewAdapter adapter;
+    ParkingListAdapter adapter;
 
     //Pass the source for the list
-    public ParkingListFragment(ListViewAdapter adapter) {
+    public ParkingListFragment(ParkingListAdapter adapter) {
         super();
         //I know we're supposed to pass data through bundle because Android may destroy
         //and recreate us and yadda yadda

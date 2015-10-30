@@ -27,31 +27,31 @@ public class ParkingList {
         int totalPlaces;
         int getStateIconResource() {
             if (totalPlaces == 0)
-                return R.drawable.marker8_32;
+                return R.drawable.marker8_48;
             if (freePlaces == totalPlaces)
-                return R.drawable.marker0_32;
+                return R.drawable.marker0_48;
             if (freePlaces == 0)
-                return R.drawable.marker8_32;
+                return R.drawable.marker8_48;
             double occup = ((double)(totalPlaces - freePlaces)) / (double)totalPlaces;
             if (occup <= 1.0/7.0)
-                return R.drawable.marker1_32;
+                return R.drawable.marker1_48;
             else
             if (occup <= 2.0/7.0)
-                return R.drawable.marker2_32;
+                return R.drawable.marker2_48;
             else
             if (occup <= 3.0/7.0)
-                return R.drawable.marker3_32;
+                return R.drawable.marker3_48;
             else
             if (occup <= 4.0/7.0)
-                return R.drawable.marker4_32;
+                return R.drawable.marker4_48;
             else
             if (occup <= 5.0/7.0)
-                return R.drawable.marker5_32;
+                return R.drawable.marker5_48;
             else
             if (occup <= 6.0/7.0)
-                return R.drawable.marker6_32;
+                return R.drawable.marker6_48;
             else
-                return R.drawable.marker7_32;
+                return R.drawable.marker7_48;
         }
     }
 

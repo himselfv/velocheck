@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
-import android.graphics.Bitmap;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -51,8 +50,8 @@ public class MainActivity extends ActionBarActivity {
     PageAdapter.Page pageAll;
     PageAdapter.Page pageMap;
 
-    public ListViewAdapter adapter;
-    public ListViewAdapter favadapter;
+    public ParkingListAdapter adapter;
+    public ParkingListAdapter favadapter;
 
     private boolean initFinished = false; //set by onCreate when initialization is finished
     private boolean dataReceived = false; //set by parkings if the data has arrived at least once
@@ -68,8 +67,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         // Create the list adapters for pages
-        this.adapter = new ListViewAdapter(this);
-        this.favadapter = new ListViewAdapter(this);
+        this.adapter = new ParkingListAdapter(this);
+        this.favadapter = new ParkingListAdapter(this);
 
         // Create the adapter that will return a fragment for each page
         mSectionsPagerAdapter = new PageAdapter(getSupportFragmentManager());
@@ -300,10 +299,7 @@ public class MainActivity extends ActionBarActivity {
         adapter.clear();
         for (int i = 0; i < parkings.count(); i++) {
             ParkingList.Parking p = parkings.get(i);
-            adapter.addItem(new ListViewEntry(
-                    p.id, p.address,
-                    Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces)
-            ));
+            adapter.addItem(p);
         }
         adapter.sort();
         adapter.notifyDataSetChanged();

@@ -11,31 +11,21 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
-class ListViewEntry implements Comparable<ListViewEntry> {
-    Integer id;
-    String name;
-    String status;
-
-    public ListViewEntry(Integer id, String name, String status) {
-        super();
-        this.id = id;
-        this.name = name;
-        this.status = status;
-    }
-
-    @Override
-    public int compareTo(ListViewEntry other) {
-        return this.name.compareTo(other.name);
-    }
-}
-
-public class ListViewAdapter extends BaseAdapter implements Filterable {
-    public ArrayList<ListViewEntry> list = new ArrayList<ListViewEntry>();
-    public ArrayList<ListViewEntry> filteredList = new ArrayList<ListViewEntry>();
+public class ParkingListAdapter extends BaseAdapter implements Filterable {
+    public ArrayList<ParkingList.Parking> list = new ArrayList<ParkingList.Parking>();
+    public ArrayList<ParkingList.Parking> filteredList = new ArrayList<ParkingList.Parking>();
     Activity activity;
 
-    public ListViewAdapter(Activity activity) {
+    private Comparator<ParkingList.Parking> comparator = new Comparator<ParkingList.Parking>() {
+        @Override
+        public int compare(ParkingList.Parking lhs, ParkingList.Parking rhs) {
+            return lhs.name.compareTo(rhs.name);
+        }
+    };
+
+    public ParkingListAdapter(Activity activity) {
         super();
         this.activity = activity;
     }
@@ -60,15 +50,15 @@ public class ListViewAdapter extends BaseAdapter implements Filterable {
         filteredList.clear();
     }
 
-    public void addItem(ListViewEntry entry) {
+    public void addItem(ParkingList.Parking entry) {
         list.add(entry);
         if (mFilter.passesCurrentFilter(entry))
             filteredList.add(entry);
     }
 
     public void sort() {
-        Collections.sort(this.list);
-        Collections.sort(this.filteredList);
+        Collections.sort(this.list, comparator);
+        Collections.sort(this.filteredList, comparator);
     }
 
     @Override
@@ -82,9 +72,9 @@ public class ListViewAdapter extends BaseAdapter implements Filterable {
         TextView txtName = (TextView) convertView.findViewById(R.id.name);
         TextView txtStatus = (TextView) convertView.findViewById(R.id.status);
 
-        ListViewEntry entry = filteredList.get(position);
-        txtName.setText(entry.name);
-        txtStatus.setText(entry.status);
+        ParkingList.Parking p = filteredList.get(position);
+        txtName.setText(p.name);
+        txtStatus.setText(Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces));
 
         return convertView;
     }
@@ -101,11 +91,11 @@ public class ListViewAdapter extends BaseAdapter implements Filterable {
     private class ItemFilter extends Filter {
         protected String constraint = ""; //must be lowercase
 
-        boolean passesFilter(ListViewEntry entry, String constraint) {
+        boolean passesFilter(ParkingList.Parking entry, String constraint) {
             return entry.name.toLowerCase().contains(constraint);
         }
 
-        public boolean passesCurrentFilter(ListViewEntry entry) {
+        public boolean passesCurrentFilter(ParkingList.Parking entry) {
             return passesFilter(entry, constraint);
         }
 
@@ -116,11 +106,11 @@ public class ListViewAdapter extends BaseAdapter implements Filterable {
 
             FilterResults results = new FilterResults();
 
-            final ArrayList<ListViewEntry> list = ListViewAdapter.this.list;
+            final ArrayList<ParkingList.Parking> list = ParkingListAdapter.this.list;
             int count = list.size();
-            final ArrayList<ListViewEntry> nlist = new ArrayList<ListViewEntry>(count);
+            final ArrayList<ParkingList.Parking> nlist = new ArrayList<ParkingList.Parking>(count);
 
-            ListViewEntry entry;
+            ParkingList.Parking entry;
             for (int i = 0; i < count; i++) {
                 entry = list.get(i);
                 if (passesFilter(entry, filterString))
@@ -137,7 +127,7 @@ public class ListViewAdapter extends BaseAdapter implements Filterable {
         @Override
         protected void publishResults(CharSequence constraint, FilterResults results) {
             this.constraint = constraint.toString().toLowerCase();
-            ListViewAdapter.this.filteredList = (ArrayList<ListViewEntry>) results.values;
+            ParkingListAdapter.this.filteredList = (ArrayList<ParkingList.Parking>) results.values;
             notifyDataSetChanged();
         }
     };

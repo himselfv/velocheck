@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 
 public class FavoritesFragment extends ParkingListFragment {
 
-    public FavoritesFragment(ListViewAdapter adapter) {
+    public FavoritesFragment(ParkingListAdapter adapter) {
         super(adapter);
     }
 

@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class AllParkingsFragment extends ParkingListFragment {
 
-    public AllParkingsFragment(ListViewAdapter adapter) {
+    public AllParkingsFragment(ParkingListAdapter adapter) {
         super(adapter);
     }
 
