@@ -1,10 +1,12 @@
 package asdbsd.velocheck;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
+import android.graphics.Bitmap;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
@@ -24,8 +26,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 //TODO: Fix bugs with page hiding / showing
 //TODO: Fav icon to the left of each item
+//TODO: State icon instead of numbers in list
 //TODO: Google MapView - test that the map is updated dynamically on reload when already created
-//TODO: Google MapView - right click
+//TODO: Google MapView - right click menu
 //TODO: Instantiate Fragments properly, reloading the data (or it crashes when the phone is rotated)
 
 public class MainActivity extends ActionBarActivity {
@@ -263,7 +266,7 @@ public class MainActivity extends ActionBarActivity {
     ParkingList.EventHandler parkingListHandler = new ParkingList.EventHandler() {
         @Override
         public void onBeginUpdate() {
-            Toast.makeText(MainActivity.this, "Querying parkings...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.querying_parkings), Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -283,12 +286,12 @@ public class MainActivity extends ActionBarActivity {
             ReloadMapMarkers();
             ReloadFavadapter();
 
-            Toast.makeText(MainActivity.this, "Updated.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, getString(R.string.parkings_updated), Toast.LENGTH_SHORT).show();
         }
 
         @Override
         public void onUpdateFailed(Exception e) {
-            Toast.makeText(MainActivity.this, "Cannot update parkings: "
+            Toast.makeText(MainActivity.this, getString(R.string.cannot_update_parkings)
                     + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
@@ -304,13 +307,24 @@ public class MainActivity extends ActionBarActivity {
     protected void PopulateMap(GoogleMap googleMap) {
         googleMap.clear();
         if (parkings.count() == 0) return; //will be called when update finished
+
+        HashMap<Integer, BitmapDescriptor> icons = new HashMap<Integer, BitmapDescriptor>();
+
         for (int i = 0; i < parkings.count(); i++) {
             MarkerOptions marker = new MarkerOptions();
             ParkingList.Parking p = parkings.get(i);
             marker.position(new LatLng(p.lat, p.lng));
             marker.title(Integer.toString(p.id));
             marker.snippet(Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces));
-            marker.icon(BitmapDescriptorFactory.fromResource(p.getStateIconResource()));
+
+            int icon = p.getStateIconResource();
+            BitmapDescriptor icon_desc = icons.get(icon);
+            if (icon_desc == null) {
+                icon_desc = BitmapDescriptorFactory.fromResource(icon);
+                icons.put(icon, icon_desc);
+            }
+            marker.icon(icon_desc);
+
             googleMap.addMarker(marker);
         }
     }

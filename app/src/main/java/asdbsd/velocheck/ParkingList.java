@@ -32,23 +32,23 @@ public class ParkingList {
                 return R.drawable.marker0_32;
             if (freePlaces == 0)
                 return R.drawable.marker8_32;
-            double occup = (freePlaces - totalPlaces) / totalPlaces;
-            if (occup <= 1/7)
+            double occup = ((double)(totalPlaces - freePlaces)) / (double)totalPlaces;
+            if (occup <= 1.0/7.0)
                 return R.drawable.marker1_32;
             else
-            if (occup <= 2/7)
+            if (occup <= 2.0/7.0)
                 return R.drawable.marker2_32;
             else
-            if (occup <= 3/7)
+            if (occup <= 3.0/7.0)
                 return R.drawable.marker3_32;
             else
-            if (occup <= 4/7)
+            if (occup <= 4.0/7.0)
                 return R.drawable.marker4_32;
             else
-            if (occup <= 5/7)
+            if (occup <= 5.0/7.0)
                 return R.drawable.marker5_32;
             else
-            if (occup <= 6/7)
+            if (occup <= 6.0/7.0)
                 return R.drawable.marker6_32;
             else
                 return R.drawable.marker7_32;
