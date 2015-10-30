@@ -16,6 +16,8 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -308,6 +310,7 @@ public class MainActivity extends ActionBarActivity {
             marker.position(new LatLng(p.lat, p.lng));
             marker.title(Integer.toString(p.id));
             marker.snippet(Integer.toString(p.freePlaces) + " / " + Integer.toString(p.totalPlaces));
+            marker.icon(BitmapDescriptorFactory.fromResource(p.getStateIconResource()));
             googleMap.addMarker(marker);
         }
     }

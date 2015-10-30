@@ -1,5 +1,6 @@
 package asdbsd.velocheck;
 
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
@@ -24,6 +25,34 @@ public class ParkingList {
         Double lng;
         int freePlaces;
         int totalPlaces;
+        int getStateIconResource() {
+            if (totalPlaces == 0)
+                return R.drawable.marker8_32;
+            if (freePlaces == totalPlaces)
+                return R.drawable.marker0_32;
+            if (freePlaces == 0)
+                return R.drawable.marker8_32;
+            double occup = (freePlaces - totalPlaces) / totalPlaces;
+            if (occup <= 1/7)
+                return R.drawable.marker1_32;
+            else
+            if (occup <= 2/7)
+                return R.drawable.marker2_32;
+            else
+            if (occup <= 3/7)
+                return R.drawable.marker3_32;
+            else
+            if (occup <= 4/7)
+                return R.drawable.marker4_32;
+            else
+            if (occup <= 5/7)
+                return R.drawable.marker5_32;
+            else
+            if (occup <= 6/7)
+                return R.drawable.marker6_32;
+            else
+                return R.drawable.marker7_32;
+        }
     }
 
     ParkingList() {
