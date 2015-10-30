@@ -1,15 +1,19 @@
 <resources>
     <string name="app_name">Velocheck</string>
 
-    <string name="title_section_favorites">Favorites</string>
-    <string name="title_section_all">All</string>
-    <string name="title_section_map">Map</string>
+    <string name="title_section_favorites">Избранные</string>
+    <string name="title_section_all">Все</string>
+    <string name="title_section_map">Карта</string>
 
-    <string name="filter_hint">Filter</string>
+    <string name="filter_hint">Найти</string>
 
-    <string name="action_update">Update</string>
+    <string name="action_update">Обновить</string>
 
-    <string name="action_add_to_favorites">Add to favorites</string>
-    <string name="action_remove_from_favorites">Remove from favorites</string>
+    <string name="action_add_to_favorites">Добавить в избранные</string>
+    <string name="action_remove_from_favorites">Убрать из избранных</string>
+
+    <string name="querying_parkings">Обновляю парковки...</string>
+    <string name="parkings_updated">Обновлено.</string>
+    <string name="cannot_update_parkings">Не могу обновить парковки: </string>
 
 </resources>

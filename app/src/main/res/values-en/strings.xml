@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Velocheck</string>
+
+    <string name="title_section_favorites">Favorites</string>
+    <string name="title_section_all">All</string>
+    <string name="title_section_map">Map</string>
+
+    <string name="filter_hint">Filter</string>
+
+    <string name="action_update">Update</string>
+
+    <string name="action_add_to_favorites">Add to favorites</string>
+    <string name="action_remove_from_favorites">Remove from favorites</string>
+
+    <string name="querying_parkings">Querying parkings...</string>
+    <string name="parkings_updated">Updated.</string>
+    <string name="cannot_update_parkings">Cannot update parkings: </string>
+
+</resources>
