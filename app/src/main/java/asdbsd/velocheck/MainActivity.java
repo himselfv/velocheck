@@ -123,7 +123,7 @@ public class MainActivity extends ActionBarActivity {
         actionBar.setDisplayShowHomeEnabled(false);
         ReloadTabs(); //Each Tab will bind to a TabListener
 
-        this.favorites = new ArrayList<Integer>();
+        this.favorites = new ArrayList<>();
         LoadFavorites();
 
         initFinished = true;
@@ -323,7 +323,7 @@ public class MainActivity extends ActionBarActivity {
         googleMap.clear();
         if (parkings.count() == 0) return; //will be called when update finished
 
-        SparseArray<BitmapDescriptor> icons = new SparseArray<BitmapDescriptor>();
+        SparseArray<BitmapDescriptor> icons = new SparseArray<>();
 
         for (int i = 0; i < parkings.count(); i++) {
             MarkerOptions marker = new MarkerOptions();
