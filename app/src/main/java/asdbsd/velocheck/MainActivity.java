@@ -26,7 +26,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 //TODO: Fix bugs with page hiding / showing
-//TODO: Instantiate Fragments properly, reloading the data (or it crashes when the phone is rotated)
 //TODO: Fav icon to the left of each item
 //TODO: Google MapView - test that the map is updated dynamically on reload when already created
 //TODO: Google MapView - right click menu
