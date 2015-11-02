@@ -1,5 +1,6 @@
 package asdbsd.velocheck;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -46,8 +47,8 @@ public class ParkingListFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(ParkingListFragment.this.getActivity(),
-                        adapter.filteredList.get(position).name, Toast.LENGTH_SHORT).show();
+                ParkingList.Parking parking = adapter.filteredList.get(position);
+                ParkingDetailsActivity.show(ParkingListFragment.this.activity, parking.id);
             }
         });
 

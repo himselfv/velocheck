@@ -1,7 +1,6 @@
 package asdbsd.velocheck;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Locale;
 
 import android.content.SharedPreferences;
@@ -13,22 +12,16 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.*;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
 //TODO: Fix bugs with page hiding / showing
 //TODO: Fav icon to the left of each item
 //TODO: Google MapView - test that the map is updated dynamically on reload when already created
-//TODO: Google MapView - right click menu
+//TODO: Handle "IsLocked"
+//TODO: "Show on map" in right-click menu in both lists
+//TODO: Configure buttons to show on Google map (remove "open map application", maybe add others?)
 
 public class MainActivity extends ActionBarActivity {
 
@@ -63,6 +56,11 @@ public class MainActivity extends ActionBarActivity {
         parkings.addParkingEventHandler(this.parkingListHandler);
         parkings.AsyncUpdate();
 
+        //It's better to just store all shared info in the App (MainActivity can get unloaded
+        //indepentenly), but for now this'll suffice
+        App app = (App) getApplicationContext();
+        app.main = this;
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -82,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
             public Fragment createFragment() { return new FavoritesFragment(); }
         });
         pageFavorites.title = getString(R.string.title_section_favorites).toUpperCase(l);
-        pageFavorites.icon = getResources().getDrawable(R.drawable.ic_favorites_32);
+        pageFavorites.icon = getResources().getDrawable(R.drawable.ic_favorited_32);
 
         pageAll = mSectionsPagerAdapter.addPage(2, new PageAdapter.FragmentConstructor() {
             @Override

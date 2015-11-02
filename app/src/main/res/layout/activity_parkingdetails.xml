@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/parkingdetails_pad_v"
+    android:paddingStart="@dimen/parkingdetails_pad_v"
+    android:paddingEnd="@dimen/parkingdetails_pad_v"
+    android:paddingRight="@dimen/parkingdetails_pad_v"
+    android:paddingTop="@dimen/parkingdetails_pad_h"
+    android:paddingBottom="@dimen/parkingdetails_pad_h"
+    >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginBottom="30dp" >
+        <ImageView
+            android:id="@+id/favstar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:src="@drawable/item_not_favorited_48" />
+        <TextView
+            android:id="@+id/title"
+            android:layout_marginLeft="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="26dp"
+            android:layout_gravity="center"
+            android:text="Station name"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/pic_occupied_places"
+            android:layout_width="@dimen/parkingdetails_places_img_sz"
+            android:layout_height="@dimen/parkingdetails_places_img_sz"
+            android:layout_gravity="center"
+            android:src="@drawable/places_occupied"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="6"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="@string/label_occupied_places"
+            android:textSize="@dimen/parkingdetails_places_font_sz"/>
+        <TextView
+            android:id="@+id/value_occupied_places"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/parkingdetails_places_font_sz"
+            android:text="0"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/pic_free_places"
+            android:layout_width="@dimen/parkingdetails_places_img_sz"
+            android:layout_height="@dimen/parkingdetails_places_img_sz"
+            android:layout_gravity="center"
+            android:src="@drawable/places_free"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="6"
+            android:layout_marginRight="20dp"
+            android:layout_marginEnd="20dp"
+            android:text="@string/label_free_places"
+            android:textSize="@dimen/parkingdetails_places_font_sz" />
+        <TextView
+            android:id="@+id/value_free_places"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/parkingdetails_places_font_sz"
+            android:text="0"/>
+
+    </LinearLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="@dimen/parkingdetails_button_padding"
+        android:layout_marginStart="@dimen/parkingdetails_button_padding"
+        android:layout_marginRight="@dimen/parkingdetails_button_padding"
+        android:layout_marginEnd="@dimen/parkingdetails_button_padding"
+        android:text="@string/action_locate_on_map"
+        />
+
+</LinearLayout>

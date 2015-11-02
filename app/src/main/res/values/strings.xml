@@ -11,9 +11,14 @@
 
     <string name="action_add_to_favorites">Добавить в избранные</string>
     <string name="action_remove_from_favorites">Убрать из избранных</string>
+    <string name="action_locate_on_map">Найти на карте</string>
 
     <string name="querying_parkings">Обновляю парковки...</string>
     <string name="parkings_updated">Обновлено.</string>
     <string name="cannot_update_parkings">Не могу обновить парковки: </string>
+
+    <string name="parking_details_name">О парковке</string>
+    <string name="label_occupied_places">Велосипедов:</string>
+    <string name="label_free_places">Свободных замков:</string>
 
 </resources>

@@ -3,9 +3,9 @@
     <item android:id="@+id/action_add_to_favorites"
         android:title="@string/action_add_to_favorites"
         android:orderInCategory="10"
-        android:icon="@drawable/ic_favorites_24" />
+        android:icon="@drawable/ic_favorited_24" />
     <item android:id="@+id/action_remove_from_favorites"
         android:title="@string/action_remove_from_favorites"
         android:orderInCategory="20"
-        android:icon="@drawable/ic_unfavorite_24" />
+        android:icon="@drawable/ic_not_favorited_24" />
 </menu>

@@ -25,6 +25,7 @@ public class ParkingList {
         Double lng;
         int freePlaces;
         int totalPlaces;
+        boolean isLocked;
         int getStateIconResource() {
             if (totalPlaces == 0)
                 return R.drawable.marker8_48;
@@ -70,6 +71,14 @@ public class ParkingList {
         return list.get(index);
     }
 
+    Parking findById(int parkingId) {
+        for (Parking p : list) {
+            if (p.id == parkingId)
+                return p;
+        }
+        return null;
+    }
+
 
     /*  Querying and parsing  */
 
@@ -111,6 +120,7 @@ public class ParkingList {
                     p.name = p.address;
                     p.freePlaces = parking.getInt("FreePlaces");
                     p.totalPlaces = parking.getInt("TotalPlaces");
+                    p.isLocked = parking.getBoolean("IsLocked");
                     JSONObject pos = parking.getJSONObject("Position");
                     p.lat = pos.getDouble("Lat");
                     p.lng = pos.getDouble("Lon");

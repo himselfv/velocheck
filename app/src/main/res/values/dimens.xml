@@ -2,4 +2,14 @@
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">4dp</dimen>
     <dimen name="activity_vertical_margin">8dp</dimen>
+
+    <dimen name="parkingdetails_pad_v">10dp</dimen>
+    <dimen name="parkingdetails_pad_h">20dp</dimen>
+
+    <dimen name="parkingdetails_places_img_sz">32dp</dimen>
+    <dimen name="parkingdetails_places_font_sz">20sp</dimen>
+
+    <dimen name="parkingdetails_button_padding">30dp</dimen>
+
+
 </resources>

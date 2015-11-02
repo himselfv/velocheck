@@ -1,12 +1,10 @@
 package asdbsd.velocheck;
 
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -17,6 +15,9 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.util.HashMap;
+import java.util.WeakHashMap;
 
 public class MapFragment extends SupportMapFragment {
     final LatLng MOSCOW = new LatLng(55.751244, 37.618423);
@@ -47,20 +48,23 @@ public class MapFragment extends SupportMapFragment {
     OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(GoogleMap googleMap) {
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MOSCOW, 10));
-            PopulateMap(googleMap);
+            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                @Override
+                public boolean onMarkerClick(Marker marker) {
+                    Integer parkingId = markerMap.get(marker.getId());
+                    ParkingDetailsActivity.show(MapFragment.this.activity, parkingId.intValue());
+                    return true;
+                }
+            });
             googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
                 @Override
                 public void onMapLongClick(LatLng latLng) {
 
                 }
             });
-            googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-                @Override
-                public boolean onMarkerClick(Marker marker) {
-                    return false;
-                }
-            });
+
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MOSCOW, 10));
+            PopulateMap(googleMap);
         }
     };
 
@@ -81,9 +85,14 @@ public class MapFragment extends SupportMapFragment {
         public void onUpdateFailed(Exception e) {}
     };
 
+    //Marker -> parkingId map. Stores marker.getId() instead of markers because markers can be recreated.
+    //See http://stackoverflow.com/questions/14054122/associate-an-object-with-marker-google-map-v2
+    HashMap<String, Integer> markerMap = new HashMap <>();
+
     //Call when map is available
     protected void PopulateMap(GoogleMap googleMap) {
         googleMap.clear();
+        markerMap.clear();
 
         if (parkings.count() == 0) return; //will be called when update finished
 
@@ -104,7 +113,8 @@ public class MapFragment extends SupportMapFragment {
             }
             marker.icon(icon_desc);
 
-            googleMap.addMarker(marker);
+            Marker m = googleMap.addMarker(marker);
+            markerMap.put(m.getId(), p.id);
         }
     }
 
