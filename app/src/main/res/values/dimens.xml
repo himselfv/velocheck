@@ -3,13 +3,15 @@
     <dimen name="activity_horizontal_margin">4dp</dimen>
     <dimen name="activity_vertical_margin">8dp</dimen>
 
-    <dimen name="parkingdetails_pad_v">10dp</dimen>
-    <dimen name="parkingdetails_pad_h">20dp</dimen>
+    <dimen name="parkingdetails.min_width">300dp</dimen>
+    <dimen name="parkingdetails.margin_top">0dp</dimen>
+    <dimen name="parkingdetails.margin_bottom">20dp</dimen>
+    <dimen name="parkingdetails.margin_h">10dp</dimen>
 
-    <dimen name="parkingdetails_places_img_sz">32dp</dimen>
-    <dimen name="parkingdetails_places_font_sz">20sp</dimen>
+    <dimen name="parkingdetails.places.img_sz">32dp</dimen>
+    <dimen name="parkingdetails.places.font_sz">20sp</dimen>
 
-    <dimen name="parkingdetails_button_padding">30dp</dimen>
+    <dimen name="parkingdetails.button_padding">30dp</dimen>
 
 
 </resources>
