@@ -3,6 +3,7 @@ package asdbsd.velocheck;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
 import android.support.v4.app.Fragment;
@@ -18,7 +19,6 @@ import android.widget.Toast;
 
 //TODO: Fix bugs with page hiding / showing
 //TODO: Handle "IsLocked"
-//TODO: "Show on map" in right-click menu in both lists
 //TODO: Configure buttons to show on Google map (remove "open map application", maybe add others?)
 
 //TODO: Fav icon to the left of each item?
@@ -114,6 +114,26 @@ public class MainActivity extends ActionBarActivity {
         if (dataReceived) // might have missed it while init was not finished. Import manually.
             parkingsUpdated();
     }
+
+
+
+    // It's possible to send us some commands from children activities by calling us
+    // with FLAG_ACTIVITY_CLEAR_TOP.
+    // This preserves the instance and passes the new intent here.
+
+    public final static String EXTRA_LOCATEONMAP = "asdbsd.velocheck.main.LOCATEONMAP";
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
+        int parkingId = intent.getIntExtra(EXTRA_LOCATEONMAP, -1);
+        if (parkingId >= 0) {
+            locateOnMap(parkingId);
+            return;
+        }
+    }
+
 
 
     /*  Page change listener. Called when the selected page changes in the ViewPager  */
@@ -224,6 +244,7 @@ public class MainActivity extends ActionBarActivity {
     void AddFavorite(Integer id) {
         favorites.add(id);
         SaveFavorites();
+        Toast.makeText(this, this.getString(R.string.favorite_added), Toast.LENGTH_SHORT).show();
         ReloadFavadapter();
         ShowHideFavorites();
     }
@@ -231,6 +252,7 @@ public class MainActivity extends ActionBarActivity {
     void RemoveFavorite(Integer id) {
         favorites.remove(id);
         SaveFavorites();
+        Toast.makeText(this, this.getString(R.string.favorite_removed), Toast.LENGTH_SHORT).show();
         ReloadFavadapter();
         ShowHideFavorites();
     }
@@ -318,5 +340,26 @@ public class MainActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    // Opens MapFragment and centers it on the specified parking
+    void locateOnMap(int parkingId) {
+        ParkingList.Parking p = parkings.findById(parkingId);
+        if (p == null) return;
+
+        this.mViewPager.setCurrentItem(2); //map
+        //have to do this before looking for fragment because it might not yet exist
+
+        //Find our fucking map fragment
+        MapFragment map = null;
+        for (Fragment f : getSupportFragmentManager().getFragments())
+            if (f instanceof MapFragment) {
+                map = (MapFragment) f;
+                break;
+            }
+        if (map == null)
+            return; //wherever it went
+
+        map.moveCamera(p.lat, p.lng);
+    }
 
 }

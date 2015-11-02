@@ -106,17 +106,18 @@ public class ParkingListFragment extends Fragment {
         switch(item.getItemId()) {
             case R.id.action_add_to_favorites:
                 entry = ParkingListFragment.this.adapter.filteredList.get(info.position);
-                if (entry != null) {
+                if (entry != null)
                     activity.AddFavorite(entry.id);
-                    Toast.makeText(activity, "Added", Toast.LENGTH_SHORT).show();
-                }
                 return true;
             case R.id.action_remove_from_favorites:
                 entry = ParkingListFragment.this.adapter.filteredList.get(info.position);
-                if (entry != null) {
+                if (entry != null)
                     activity.RemoveFavorite(entry.id);
-                    Toast.makeText(activity, "Removed", Toast.LENGTH_SHORT).show();
-                }
+                return true;
+            case R.id.action_locate_on_map:
+                entry = ParkingListFragment.this.adapter.filteredList.get(info.position);
+                if (entry != null)
+                    activity.locateOnMap(entry.id);
                 return true;
         }
         return super.onContextItemSelected(item);

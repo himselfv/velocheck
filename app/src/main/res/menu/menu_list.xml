@@ -8,4 +8,7 @@
         android:title="@string/action_remove_from_favorites"
         android:orderInCategory="20"
         android:icon="@drawable/ic_not_favorited_24" />
+    <item android:id="@+id/action_locate_on_map"
+        android:title="@string/action_locate_on_map"
+        android:orderInCategory="30" />
 </menu>

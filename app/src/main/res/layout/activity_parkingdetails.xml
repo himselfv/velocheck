@@ -95,6 +95,7 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/button_locate_on_map"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -103,6 +104,7 @@
         android:layout_marginRight="@dimen/parkingdetails.button_padding"
         android:layout_marginEnd="@dimen/parkingdetails.button_padding"
         android:text="@string/action_locate_on_map"
+        android:onClick="onLocateOnMapClick"
         />
 
 </LinearLayout>

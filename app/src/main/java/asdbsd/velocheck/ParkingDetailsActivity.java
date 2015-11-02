@@ -91,4 +91,12 @@ public class ParkingDetailsActivity extends Activity {
     };
 
 
+    public void onLocateOnMapClick(View view) {
+        Intent intent = new Intent(this, MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(MainActivity.EXTRA_LOCATEONMAP, this.parkingId);
+        startActivity(intent);
+    }
+
+
 }

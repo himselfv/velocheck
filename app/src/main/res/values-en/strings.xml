@@ -5,15 +5,23 @@
     <string name="title_section_all">All</string>
     <string name="title_section_map">Map</string>
 
-    <string name="filter_hint">Filter</string>
+    <string name="filter_hint">Start typing an address</string>
 
     <string name="action_update">Update</string>
 
     <string name="action_add_to_favorites">Add to favorites</string>
     <string name="action_remove_from_favorites">Remove from favorites</string>
+    <string name="action_locate_on_map">Show on map</string>
 
     <string name="querying_parkings">Querying parkings...</string>
     <string name="parkings_updated">Updated.</string>
     <string name="cannot_update_parkings">Cannot update parkings: </string>
+
+    <string name="favorite_added">Favorited</string>
+    <string name="favorite_removed">Favorite removed</string>
+
+    <string name="parking_details_name">Parking details</string>
+    <string name="label_occupied_places">Bikes:</string>
+    <string name="label_free_places">Free locks:</string>
 
 </resources>

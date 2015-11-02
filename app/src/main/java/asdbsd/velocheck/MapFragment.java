@@ -1,5 +1,6 @@
 package asdbsd.velocheck;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -12,12 +13,12 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.HashMap;
-import java.util.WeakHashMap;
 
 public class MapFragment extends SupportMapFragment {
     final LatLng MOSCOW = new LatLng(55.751244, 37.618423);
@@ -38,11 +39,38 @@ public class MapFragment extends SupportMapFragment {
         this.parkings = activity.parkings;
         parkings.addParkingEventHandler(parkingEventHandler);
 
+        mapReady = false;
         this.getMapAsync(mapReadyCallback);
 
         return view;
     }
 
+
+    // When this fragment starts, the map is not available immediately. When the map is available,
+    // GoogleMap calls mapReadyCallback.
+    // In it, we initialize the map and apply any queued changes, then set mapReady flag.
+
+    // Any functions which alter the map must queue changes if the map is not ready, and execute
+    // those in mapReadyCallback.
+
+    // The obvious way to see if the map is ready is to query it: getMap().
+    // But sometimes it returns map instance even before mapReadyCallback fires, which then
+    // overwrites your changes.
+    // Therefore call this getGoogleMap() which explicitly checks that mapReadyCallback had fired.
+
+    protected boolean mapReady = false;
+
+    GoogleMap getGoogleMap() {
+        if (!mapReady)
+            return null;
+        else
+            return this.getMap();
+    }
+
+
+
+    protected LatLng startCameraPos = MOSCOW;
+    protected int startZoomLevel = 10;
 
     //Called when the map is loaded for the first time
     OnMapReadyCallback mapReadyCallback = new OnMapReadyCallback() {
@@ -56,15 +84,10 @@ public class MapFragment extends SupportMapFragment {
                     return true;
                 }
             });
-            googleMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-                @Override
-                public void onMapLongClick(LatLng latLng) {
 
-                }
-            });
-
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(MOSCOW, 10));
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(startCameraPos, startZoomLevel));
             PopulateMap(googleMap);
+            mapReady = true;
         }
     };
 
@@ -75,7 +98,7 @@ public class MapFragment extends SupportMapFragment {
 
         @Override
         public void onUpdateFinished() {
-            GoogleMap googleMap = MapFragment.this.getMap();
+            GoogleMap googleMap = MapFragment.this.getGoogleMap();
             if (googleMap != null)
                 PopulateMap(googleMap);
             //otherwise it will be populated in the default getMapAsync
@@ -115,6 +138,18 @@ public class MapFragment extends SupportMapFragment {
 
             Marker m = googleMap.addMarker(marker);
             markerMap.put(m.getId(), p.id);
+        }
+    }
+
+    void moveCamera(double lat, double lng) {
+        GoogleMap googleMap = MapFragment.this.getGoogleMap();
+        if (googleMap != null) {
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                    new LatLng(lat, lng), 15));
+        } else {
+            //Will be set in mapReadyCallback
+            startCameraPos = new LatLng(lat, lng);
+            startZoomLevel = 15;
         }
     }
 
