@@ -18,10 +18,7 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 //TODO: Fix bugs with page hiding / showing
-//TODO: Handle "IsLocked"
 //TODO: Configure buttons to show on Google map (remove "open map application", maybe add others?)
-
-//TODO: Fav icon to the left of each item?
 
 public class MainActivity extends ActionBarActivity {
 
