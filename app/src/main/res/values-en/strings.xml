@@ -23,5 +23,6 @@
     <string name="parking_details_name">Parking details</string>
     <string name="label_occupied_places">Bikes:</string>
     <string name="label_free_places">Free locks:</string>
+    <string name="label_parking_disabled">Temporarily out of service!</string>
 
 </resources>

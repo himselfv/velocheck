@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class ParkingDetailsActivity extends Activity {
@@ -64,6 +65,13 @@ public class ParkingDetailsActivity extends Activity {
 
         TextView freePlaces = (TextView) findViewById(R.id.value_free_places);
         freePlaces.setText(Integer.toString(p.freePlaces));
+
+        LinearLayout parkingDisabled = (LinearLayout) findViewById(R.id.parking_disabled);
+        if (p.isLocked)
+            parkingDisabled.setVisibility(View.VISIBLE);
+        else
+            parkingDisabled.setVisibility(View.GONE);
+
     }
 
 

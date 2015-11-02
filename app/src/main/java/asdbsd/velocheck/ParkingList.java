@@ -27,6 +27,8 @@ public class ParkingList {
         int totalPlaces;
         boolean isLocked;
         int getStateIconResource() {
+            if (isLocked)
+                return R.drawable.marker_no_48;
             if (totalPlaces == 0)
                 return R.drawable.marker8_48;
             if (freePlaces == totalPlaces)

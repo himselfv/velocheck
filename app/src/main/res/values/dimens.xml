@@ -8,6 +8,11 @@
     <dimen name="parkingdetails.margin_bottom">20dp</dimen>
     <dimen name="parkingdetails.margin_h">10dp</dimen>
 
+    <dimen name="parkingdetails.icon.margin_right">10dp</dimen>
+
+    <dimen name="parkingdetails.disabled.img_sz">48dp</dimen>
+    <dimen name="parkingdetails.disabled.font_sz">20sp</dimen>
+
     <dimen name="parkingdetails.places.img_sz">32dp</dimen>
     <dimen name="parkingdetails.places.font_sz">20sp</dimen>
 

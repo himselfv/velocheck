@@ -12,6 +12,7 @@
     android:paddingBottom="@dimen/parkingdetails.margin_bottom"
     >
 
+    <!-- Favorite start + title -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -22,17 +23,50 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:clickable="true"
+            android:layout_marginRight="@dimen/parkingdetails.icon.margin_right"
+            android:layout_marginEnd="@dimen/parkingdetails.icon.margin_right"
             android:src="@drawable/item_not_favorited_48" />
         <TextView
             android:id="@+id/title"
-            android:layout_marginLeft="10dp"
-            android:layout_marginStart="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="20sp"
             android:layout_gravity="center"
             android:text="Station name"/>
     </LinearLayout>
+
+
+    <!-- Warning text -->
+    <LinearLayout
+        android:id="@+id/parking_disabled"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:visibility="gone"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="@dimen/parkingdetails.disabled.img_sz"
+            android:layout_height="@dimen/parkingdetails.disabled.img_sz"
+            android:layout_gravity="top"
+            android:layout_marginRight="@dimen/parkingdetails.icon.margin_right"
+            android:layout_marginEnd="@dimen/parkingdetails.icon.margin_right"
+            android:src="@drawable/disabled_48"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:textColor="#FF0000"
+            android:text="@string/label_parking_disabled"
+            android:textSize="@dimen/parkingdetails.disabled.font_sz"/>
+
+    </LinearLayout>
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -43,56 +77,66 @@
             android:id="@+id/pic_occupied_places"
             android:layout_width="@dimen/parkingdetails.places.img_sz"
             android:layout_height="@dimen/parkingdetails.places.img_sz"
-            android:layout_gravity="center"
+            android:layout_gravity="top"
+            android:layout_marginRight="@dimen/parkingdetails.icon.margin_right"
+            android:layout_marginEnd="@dimen/parkingdetails.icon.margin_right"
             android:src="@drawable/places_occupied"/>
-        <TextView
-            android:layout_width="0dp"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:text="@string/label_occupied_places"
-            android:textSize="@dimen/parkingdetails.places.font_sz"/>
-        <TextView
-            android:id="@+id/value_occupied_places"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="@dimen/parkingdetails.places.font_sz"
-            android:text="0"/>
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/label_occupied_places"
+                    android:textSize="@dimen/parkingdetails.places.font_sz"/>
+                <TextView
+                    android:id="@+id/value_occupied_places"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/parkingdetails.places.font_sz"
+                    android:text="0"/>
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/label_free_places"
+                    android:textSize="@dimen/parkingdetails.places.font_sz" />
+                <TextView
+                    android:id="@+id/value_free_places"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/parkingdetails.places.font_sz"
+                    android:text="0"/>
+            </LinearLayout>
+
+        </LinearLayout>
 
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/pic_free_places"
-            android:layout_width="@dimen/parkingdetails.places.img_sz"
-            android:layout_height="@dimen/parkingdetails.places.img_sz"
-            android:layout_gravity="center"
-            android:src="@drawable/places_free"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:layout_marginRight="10dp"
-            android:layout_marginEnd="10dp"
-            android:text="@string/label_free_places"
-            android:textSize="@dimen/parkingdetails.places.font_sz" />
-        <TextView
-            android:id="@+id/value_free_places"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="@dimen/parkingdetails.places.font_sz"
-            android:text="0"/>
-
-    </LinearLayout>
 
     <Button
         android:id="@+id/button_locate_on_map"
