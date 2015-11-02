@@ -1,6 +1,7 @@
 package asdbsd.velocheck;
 
 import android.content.Intent;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.ContextMenu;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 // Only works with MainActivity because yeah
@@ -36,10 +38,20 @@ public class ParkingListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = createView(inflater, container, savedInstanceState);
+        final View rootView = createView(inflater, container, savedInstanceState);
 
         activity = (MainActivity) this.getActivity();
         this.adapter = retrieveAdapter();
+
+        adapter.registerDataSetObserver(new DataSetObserver() {
+            @Override
+            public void onChanged() {
+                View rootView = ParkingListFragment.this.getView();
+                if (rootView != null)
+                    ParkingListFragment.this.updateStatusText(rootView);
+            }
+        });
+        updateStatusText(rootView);
 
         ListView listView = (ListView)rootView.findViewById(R.id.listView1);
         listView.setAdapter(adapter);
@@ -53,6 +65,7 @@ public class ParkingListFragment extends Fragment {
         });
 
         registerForContextMenu(listView); //propagate events to this parent object
+
         return rootView;
     }
 
@@ -121,6 +134,13 @@ public class ParkingListFragment extends Fragment {
                 return true;
         }
         return super.onContextItemSelected(item);
+    }
+
+    //Called when creating the view, and on every adapter dataset change
+    protected void updateStatusText(View rootView) {
+        //Hide the "Updating..." text once any data is available
+        TextView statusText = (TextView) rootView.findViewById(R.id.status_text);
+        statusText.setVisibility(View.GONE);
     }
 
 }

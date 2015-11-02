@@ -5,6 +5,9 @@
     <string name="title_section_all">Все</string>
     <string name="title_section_map">Карта</string>
 
+    <string name="status_updating">Обновление...</string>
+    <string name="no_favorites_hint">Занесите несколько парковок в избранные, чтобы видеть их при запуске сразу же.</string>
+
     <string name="filter_hint">Начните печатать адрес</string>
 
     <string name="action_update">Обновить</string>
@@ -17,8 +20,8 @@
     <string name="parkings_updated">Обновлено.</string>
     <string name="cannot_update_parkings">Не могу обновить парковки: </string>
 
-    <string name="favorite_added">Добавлено в избранное</string>
-    <string name="favorite_removed">Убрано из избранного</string>
+    <string name="favorite_added">Добавлена в избранные</string>
+    <string name="favorite_removed">Убрана из избранных</string>
 
     <string name="parking_details_name">О парковке</string>
     <string name="label_occupied_places">Велосипедов:</string>

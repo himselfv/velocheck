@@ -1,5 +1,17 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <TextView android:id="@+id/status_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:textSize="20sp"
+        android:text="@string/status_updating"
+        />
+
     <ListView
         android:id="@+id/listView1"
         android:layout_width="match_parent"

@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 //TODO: Fix bugs with page hiding / showing
-//TODO: Configure buttons to show on Google map (remove "open map application", maybe add others?)
 
 public class MainActivity extends ActionBarActivity {
 
@@ -267,7 +266,7 @@ public class MainActivity extends ActionBarActivity {
 
     //Favorites are the first pane, but when there are none we want to go straight to full list
     void ShowHideFavorites() {
-        pageFavorites.setVisible(favorites.size() != 0);
+        //pageFavorites.setVisible(favorites.size() != 0);
     }
 
 

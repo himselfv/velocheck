@@ -5,6 +5,9 @@
     <string name="title_section_all">All</string>
     <string name="title_section_map">Map</string>
 
+    <string name="status_updating">Updating...</string>
+    <string name="no_favorites_hint">Add some parkings to Favorites to see them instantly at the start.</string>
+
     <string name="filter_hint">Start typing an address</string>
 
     <string name="action_update">Update</string>
