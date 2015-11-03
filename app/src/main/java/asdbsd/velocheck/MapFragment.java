@@ -1,6 +1,5 @@
 package asdbsd.velocheck;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -13,7 +12,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -80,7 +78,7 @@ public class MapFragment extends SupportMapFragment {
                 @Override
                 public boolean onMarkerClick(Marker marker) {
                     Integer parkingId = markerMap.get(marker.getId());
-                    ParkingDetailsActivity.show(MapFragment.this.activity, parkingId.intValue());
+                    ParkingDetailsActivity.show(MapFragment.this.activity, parkingId);
                     return true;
                 }
             });

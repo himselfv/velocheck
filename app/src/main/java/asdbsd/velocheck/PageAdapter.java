@@ -6,7 +6,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class PageAdapter extends FragmentPagerAdapter {
     public PageAdapter(FragmentManager fm) {
@@ -36,8 +35,8 @@ public class PageAdapter extends FragmentPagerAdapter {
         }
     }
 
-    protected ArrayList<Page> pages = new ArrayList<Page>();
-    protected ArrayList<Page> visiblePages = new ArrayList<Page>();
+    protected ArrayList<Page> pages = new ArrayList<>();
+    protected ArrayList<Page> visiblePages = new ArrayList<>();
 
     //These do not call notifyDataSetChanged -- call manually
     Page addPage(long id, FragmentConstructor constructor) {

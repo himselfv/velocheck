@@ -1,8 +1,6 @@
 package asdbsd.velocheck;
 
-import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,7 +62,7 @@ public class ParkingList {
 
     /* External list access */
 
-    protected ArrayList<Parking> list = new ArrayList<Parking>();
+    protected ArrayList<Parking> list = new ArrayList<>();
     int count() {
         return list.size();
     }
@@ -112,7 +110,7 @@ public class ParkingList {
                 JSONObject json = new JSONObject(jsonString);
                 JSONArray parking_list = json.getJSONArray("Items");
 
-                ArrayList<Parking> new_list = new ArrayList<Parking> ();
+                ArrayList<Parking> new_list = new ArrayList<> ();
                 for (int i=0; i < parking_list.length(); i++) {
                     JSONObject parking = parking_list.getJSONObject(i);
 
@@ -160,7 +158,7 @@ public class ParkingList {
     }
 
 
-    protected ArrayList<EventHandler> handlers = new ArrayList<EventHandler>();
+    protected ArrayList<EventHandler> handlers = new ArrayList<>();
 
     void addParkingEventHandler(EventHandler handler) {
         handlers.add(handler);

@@ -15,8 +15,8 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class ParkingListAdapter extends BaseAdapter implements Filterable {
-    public ArrayList<ParkingList.Parking> list = new ArrayList<ParkingList.Parking>();
-    public ArrayList<ParkingList.Parking> filteredList = new ArrayList<ParkingList.Parking>();
+    public ArrayList<ParkingList.Parking> list = new ArrayList<>();
+    public ArrayList<ParkingList.Parking> filteredList = new ArrayList<>();
     Activity activity;
 
     private Comparator<ParkingList.Parking> comparator = new Comparator<ParkingList.Parking>() {
@@ -109,7 +109,7 @@ public class ParkingListAdapter extends BaseAdapter implements Filterable {
 
             final ArrayList<ParkingList.Parking> list = ParkingListAdapter.this.list;
             int count = list.size();
-            final ArrayList<ParkingList.Parking> nlist = new ArrayList<ParkingList.Parking>(count);
+            final ArrayList<ParkingList.Parking> nlist = new ArrayList<>(count);
 
             ParkingList.Parking entry;
             for (int i = 0; i < count; i++) {
@@ -131,7 +131,7 @@ public class ParkingListAdapter extends BaseAdapter implements Filterable {
             ParkingListAdapter.this.filteredList = (ArrayList<ParkingList.Parking>) results.values;
             notifyDataSetChanged();
         }
-    };
+    }
 
 
 }
