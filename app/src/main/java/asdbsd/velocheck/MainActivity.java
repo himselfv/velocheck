@@ -17,8 +17,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-//TODO: Fix bugs with page hiding / showing
-
 public class MainActivity extends ActionBarActivity {
 
     /**
