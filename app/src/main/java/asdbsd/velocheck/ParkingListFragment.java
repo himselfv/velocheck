@@ -3,6 +3,7 @@ package asdbsd.velocheck;
 import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -12,10 +13,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.util.Log;
+import asdbsd.velocheck.FragmentLifecycle;
 
 // Only works with MainActivity because yeah
 
-public class ParkingListFragment extends Fragment {
+public class ParkingListFragment extends Fragment implements FragmentLifecycle {
     MainActivity activity;
     ParkingListAdapter adapter;
 
@@ -64,7 +67,70 @@ public class ParkingListFragment extends Fragment {
 
         registerForContextMenu(listView); //propagate events to this parent object
 
+        setupSwipeRefresh(rootView);
+
         return rootView;
+    }
+
+    @Override
+    public void onDestroyView() {
+        releaseSwipeRefresh();
+        super.onDestroyView();
+    }
+
+
+    /*
+    Swipe-refresh layout. See:
+      http://developer.alexanderklimov.ru/android/layout/swiperefreshlayout.php
+      https://developer.android.com/training/swipe/respond-refresh-request
+    Each page has its own swipe-refresh => all have to watch for parking updates.
+
+    The adapter has no refresh() method, no back link to notify its owners to reload it,
+    no begin/end/fail update notifications (only "changed"), so have to access .parkings directly.
+    */
+    SwipeRefreshLayout swipeRefresh_list;
+    SwipeRefreshLayout swipeRefresh_empty;
+    ParkingList.EventHandler parkingListHandler;
+    SwipeRefreshLayout.OnRefreshListener swipeRefreshListener;
+    public void setupSwipeRefresh(View rootView) {
+        swipeRefresh_list = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh_list);
+        swipeRefresh_empty = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh_empty);
+
+        swipeRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+            @Override public void onRefresh() {
+
+                Log.i("Parkings", this.toString()+": onRefresh");
+                activity.parkings.AsyncUpdate();
+            }
+        };
+        swipeRefresh_list.setOnRefreshListener(swipeRefreshListener);
+        swipeRefresh_empty.setOnRefreshListener(swipeRefreshListener);
+
+        this.parkingListHandler = new ParkingList.EventHandler() {
+            //All can happen while onCreate is not yet finished.
+            @Override public void onBeginUpdate() { swipeRefresh_list.setRefreshing(true); swipeRefresh_empty.setRefreshing(true); }
+            @Override public void onUpdateFinished() { swipeRefresh_list.setRefreshing(false); swipeRefresh_empty.setRefreshing(false); }
+            @Override public void onUpdateFailed(Exception e) { swipeRefresh_list.setRefreshing(false); swipeRefresh_empty.setRefreshing(false); }
+        };
+        activity.parkings.addParkingEventHandler(parkingListHandler);
+    }
+    public void releaseSwipeRefresh() {
+        activity.parkings.removeParkingEventHandler(this.parkingListHandler);
+    }
+
+    @Override
+    public void onShowFragment() {
+        if (this.swipeRefresh_empty != null)
+            this.swipeRefresh_empty.setEnabled(true);
+        if (this.swipeRefresh_list != null)
+            this.swipeRefresh_list.setEnabled(true);
+    }
+    @Override
+    public void onHideFragment() {
+        if (this.swipeRefresh_empty != null)
+            this.swipeRefresh_empty.setEnabled(false);
+        if (this.swipeRefresh_list != null)
+            this.swipeRefresh_list.setEnabled(false);
     }
 
     @Override
@@ -137,7 +203,7 @@ public class ParkingListFragment extends Fragment {
     //Called when creating the view, and on every adapter dataset change
     protected void updateStatusText(View rootView) {
         //Hide the "Updating..." text once any data is available
-        TextView statusText = (TextView) rootView.findViewById(R.id.status_text);
+        View statusText = rootView.findViewById(R.id.status_text_wrapper);
         statusText.setVisibility(View.GONE);
     }
 

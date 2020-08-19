@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
+import asdbsd.velocheck.FragmentLifecycle;
 
 public class MainActivity extends ActionBarActivity {
 
@@ -132,9 +133,13 @@ public class MainActivity extends ActionBarActivity {
 
     /*  Page change listener. Called when the selected page changes in the ViewPager  */
     ViewPager.OnPageChangeListener mPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
+        int currentPosition = 0;
+        Object currentFragment = null;
+
         @Override
         public void onPageSelected(int position) {
             Object page = mSectionsPagerAdapter.visiblePages.get(position);
+
             ActionBar.Tab tab = actionBar.getSelectedTab();
             //Take care to avoid infinite loop
             if ((tab == null) || (tab.getTag() != page)) {
@@ -144,6 +149,19 @@ public class MainActivity extends ActionBarActivity {
                         break;
                     }
             }
+
+            Object currentFragment = mSectionsPagerAdapter.getItem(currentPosition);
+            if ((currentFragment != null) && (currentFragment instanceof FragmentLifecycle)) {
+                FragmentLifecycle fragment = (FragmentLifecycle) currentFragment;
+                fragment.onHideFragment();
+            }
+            Object newFragment = mSectionsPagerAdapter.getItem(position);
+            if ((newFragment != null) && (newFragment instanceof FragmentLifecycle)) {
+                FragmentLifecycle fragment = (FragmentLifecycle) newFragment;
+                fragment.onShowFragment();
+            }
+            currentPosition = position;
+            currentFragment = newFragment;
         }
     };
 
@@ -206,7 +224,6 @@ public class MainActivity extends ActionBarActivity {
 
 
     /*  Favorites  */
-
     ArrayList<Integer> favorites; // a list of parking ids
 
     void LoadFavorites() {
@@ -269,8 +286,6 @@ public class MainActivity extends ActionBarActivity {
 
 
     /*  Parkings list  */
-
-
     ParkingList parkings = new ParkingList();
     ParkingList.EventHandler parkingListHandler = new ParkingList.EventHandler() {
         //All of this can be called while onCreate is not yet finished.
