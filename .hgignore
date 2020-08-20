@@ -1,13 +1,20 @@
 syntax:glob
 
-# Consider:
-#  https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
-
 .gitignore
 .gradle
 local.properties
 .DS_Store
 build
+
+# The entire .idea folder is IDE settings.
+# Guides say "commit but ignore specific files", but almost everything is regenerable trash.
+# Ignore by default and commit specific files manually:
+.idea/
+
+
+# Point-by-point ignore in case .idea is reenabled.
+# Consider:
+#  https://github.com/github/gitignore/blob/master/Global/JetBrains.gitignore
 
 # User-specific stuff
 .idea/**/workspace.xml
