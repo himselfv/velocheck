@@ -6,33 +6,25 @@ import java.util.Locale;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 import asdbsd.velocheck.FragmentLifecycle;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
+import com.google.android.material.tabs.TabLayout;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
     /**
      * Pager control.
      */
     ViewPager mViewPager;
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     PageAdapter mSectionsPagerAdapter;
     PageAdapter.Page pageFavorites;
     PageAdapter.Page pageAll;
@@ -91,16 +83,26 @@ public class MainActivity extends ActionBarActivity {
         pageMap.title = getString(R.string.title_section_map).toUpperCase(l);
         pageMap.icon = getResources().getDrawable(R.drawable.ic_map_32);
 
-        // Set up the ViewPager with the sections adapter.
+        //Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setOnPageChangeListener(mPageChangeListener);
+        mViewPager.addOnPageChangeListener(mPageChangeListener);
 
-        actionBar = getSupportActionBar();
-        actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-        actionBar.setDisplayShowTitleEnabled(false);
-        actionBar.setDisplayShowHomeEnabled(false);
-        ReloadTabs(); //Each Tab will bind to a TabListener
+        /*
+        Set up TabLayout to reflect ViewPager's pages (with TabLayout it's automatic)
+        Sliding tabs using TabLayout:
+            https://guides.codepath.com/android/Google-Play-Style-Tabs-using-TabLayout
+        Main activity layout example:
+          https://stackoverflow.com/a/27729494
+        */
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(mViewPager);
+        //Have to update icons manually
+        updatePageIcons();
+
+        //Set up the main toolbar (used as an action bar)
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         this.favorites = new ArrayList<>();
         LoadFavorites();
@@ -134,21 +136,10 @@ public class MainActivity extends ActionBarActivity {
     /*  Page change listener. Called when the selected page changes in the ViewPager  */
     ViewPager.OnPageChangeListener mPageChangeListener = new ViewPager.SimpleOnPageChangeListener() {
         int currentPosition = 0;
-        Object currentFragment = null;
 
         @Override
         public void onPageSelected(int position) {
             Object page = mSectionsPagerAdapter.visiblePages.get(position);
-
-            ActionBar.Tab tab = actionBar.getSelectedTab();
-            //Take care to avoid infinite loop
-            if ((tab == null) || (tab.getTag() != page)) {
-                for (int i = 0; i < actionBar.getTabCount(); i++)
-                    if (actionBar.getTabAt(i).getTag() == page) {
-                        actionBar.setSelectedNavigationItem(i);
-                        break;
-                    }
-            }
 
             Object currentFragment = mSectionsPagerAdapter.getItem(currentPosition);
             if ((currentFragment != null) && (currentFragment instanceof FragmentLifecycle)) {
@@ -161,7 +152,6 @@ public class MainActivity extends ActionBarActivity {
                 fragment.onShowFragment();
             }
             currentPosition = position;
-            currentFragment = newFragment;
         }
     };
 
@@ -171,56 +161,27 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public void onChanged() {
             //Called when the list of tabs is changed
-            ReloadTabs();
         }
 
         @Override
         public void onInvalidated() {
             //Called when the list of tabs becomes invalid for whatever reason
-            ClearTabs();
         }
     };
 
 
-    /*  Tab control listener. Called when the user changes tabs.  */
-    ActionBar actionBar;
-    ActionBar.TabListener tabListener = new ActionBar.TabListener() {
-        public void onTabSelected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
-            // switched to a different tab -- open associated fragment
-            Object tag = tab.getTag();
-            for (int i = 0; i < mSectionsPagerAdapter.visiblePages.size(); i++)
-                if (mSectionsPagerAdapter.visiblePages.get(i) == tag)
-                    if (mViewPager.getCurrentItem() != i)
-                        mViewPager.setCurrentItem(i);
-        }
-
-        public void onTabUnselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
-            // switched to other tab -- will react in onTabSelected() for that tab
-        }
-
-        public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction ft) {
-            // user clicked the already selected tab again. Whatever.
-        }
-    };
-
-    void ClearTabs() {
-        actionBar.removeAllTabs();
-    }
-
-    //Called when the page list has changed and tab list needs to be reloaded
-    void ReloadTabs() {
-        actionBar.removeAllTabs();
+    /*
+    TabLayout automatically uses ViewPager's pages but not icons
+    */
+    TabLayout tabLayout;
+    void updatePageIcons() {
         for (int i = 0; i < mSectionsPagerAdapter.visiblePages.size(); i ++) {
             PageAdapter.Page page = mSectionsPagerAdapter.visiblePages.get(i);
-            ActionBar.Tab tab = actionBar.newTab();
-            tab.setText(page.title);
-            tab.setIcon(page.icon);
-            tab.setTag(page);
-            tab.setTabListener(this.tabListener);
-            actionBar.addTab(tab);
+            TabLayout.Tab tab = tabLayout.getTabAt(i);
+            if (tab != null)
+                tab.setIcon(page.icon);
         }
     }
-
 
 
     /*  Favorites  */
@@ -236,8 +197,7 @@ public class MainActivity extends ActionBarActivity {
             favs = favStr.split(",");
         for (String favId : favs)
             favorites.add(Integer.parseInt(favId));
-        //We're only calling this on init, so
-        //don't reload favadapter, this'll be done in time.
+        //We're only calling this on init, so don't reload favadapter, this'll be done in time.
         ShowHideFavorites();
     }
 
