@@ -1,7 +1,6 @@
 <merge xmlns:android="http://schemas.android.com/apk/res/android">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swiperefresh_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -17,7 +16,6 @@
 
     <!-- Alternative view for when the list is empty. Requires its own SwipeRefresh -->
     <android.support.v4.widget.SwipeRefreshLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/swiperefresh_empty"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -29,10 +27,7 @@
 
             <TextView android:id="@+id/status_text"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
+                android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:paddingLeft="10dp"
