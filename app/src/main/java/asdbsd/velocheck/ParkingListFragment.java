@@ -91,15 +91,13 @@ public class ParkingListFragment extends Fragment implements FragmentLifecycle {
     SwipeRefreshLayout swipeRefresh_list;
     SwipeRefreshLayout swipeRefresh_empty;
     ParkingList.EventHandler parkingListHandler;
-    SwipeRefreshLayout.OnRefreshListener swipeRefreshListener;
     public void setupSwipeRefresh(View rootView) {
         swipeRefresh_list = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh_list);
         swipeRefresh_empty = (SwipeRefreshLayout) rootView.findViewById(R.id.swiperefresh_empty);
 
-        swipeRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
+        SwipeRefreshLayout.OnRefreshListener swipeRefreshListener = new SwipeRefreshLayout.OnRefreshListener() {
             @Override public void onRefresh() {
-
-                Log.i("Parkings", this.toString()+": onRefresh");
+                Log.i("Parkings", this.toString()+": onRefresh ("+this.toString()+")");
                 activity.parkings.AsyncUpdate();
             }
         };
@@ -202,9 +200,11 @@ public class ParkingListFragment extends Fragment implements FragmentLifecycle {
 
     //Called when creating the view, and on every adapter dataset change
     protected void updateStatusText(View rootView) {
-        //Hide the "Updating..." text once any data is available
-        View statusText = rootView.findViewById(R.id.status_text_wrapper);
-        statusText.setVisibility(View.GONE);
+        //Hide the "Updating..." text once any data is available for the first time
+        if (activity.parkings.count() > 0) {
+            View statusText = rootView.findViewById(R.id.swiperefresh_empty);
+            statusText.setVisibility(View.GONE);
+        }
     }
 
 }
