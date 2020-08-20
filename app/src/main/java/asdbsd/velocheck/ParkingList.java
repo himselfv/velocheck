@@ -82,7 +82,7 @@ public class ParkingList {
 
     /*  Querying and parsing  */
 
-    private String queryUrl = "http://velobike.ru/proxy/parkings/";
+    private String queryUrl = "https://velobike.ru/proxy/parkings/";
 
     void AsyncUpdate() {
         for (EventHandler handler : handlers)
