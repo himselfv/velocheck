@@ -24,7 +24,8 @@
     <string name="favorite_removed">Убрана из избранных</string>
 
     <string name="parking_details_name">О парковке</string>
-    <string name="label_occupied_places">Велосипедов:</string>
+    <string name="label_occupied_ordinary">Велосипедов:</string>
+    <string name="label_occupied_electric">Эл. велосипедов:</string>
     <string name="label_free_places">Свободных замков:</string>
     <string name="label_parking_disabled">Парковка временно не работает!</string>
 

@@ -98,10 +98,10 @@
                     android:layout_weight="1"
                     android:layout_marginRight="10dp"
                     android:layout_marginEnd="10dp"
-                    android:text="@string/label_occupied_places"
+                    android:text="@string/label_occupied_ordinary"
                     android:textSize="@dimen/parkingdetails.places.font_sz"/>
                 <TextView
-                    android:id="@+id/value_occupied_places"
+                    android:id="@+id/value_occupied_ordinary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -109,6 +109,27 @@
                     android:text="0"/>
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/label_occupied_electric"
+                    android:textSize="@dimen/parkingdetails.places.font_sz"/>
+                <TextView
+                    android:id="@+id/value_occupied_electric"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textSize="@dimen/parkingdetails.places.font_sz"
+                    android:text="0"/>
+            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -131,12 +152,8 @@
                     android:textSize="@dimen/parkingdetails.places.font_sz"
                     android:text="0"/>
             </LinearLayout>
-
         </LinearLayout>
-
     </LinearLayout>
-
-
 
     <Button
         android:id="@+id/button_locate_on_map"

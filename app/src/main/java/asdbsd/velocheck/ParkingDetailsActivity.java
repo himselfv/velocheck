@@ -61,8 +61,11 @@ public class ParkingDetailsActivity extends Activity {
         TextView title = (TextView) findViewById(R.id.title);
         title.setText(p.address);
 
-        TextView occupiedPlaces = (TextView) findViewById(R.id.value_occupied_places);
-        occupiedPlaces.setText(Integer.toString(p.totalPlaces - p.freePlaces));
+        TextView occupiedOrdinary = (TextView) findViewById(R.id.value_occupied_ordinary);
+        occupiedOrdinary.setText(Integer.toString(p.availableOrdinaryBikes));
+
+        TextView occupiedElectric = (TextView) findViewById(R.id.value_occupied_electric);
+        occupiedElectric.setText(Integer.toString(p.availableElectricBikes));
 
         TextView freePlaces = (TextView) findViewById(R.id.value_free_places);
         freePlaces.setText(Integer.toString(p.freePlaces));

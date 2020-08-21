@@ -14,16 +14,58 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class ParkingList {
+/*
+Известные поля в JSON с примерами:
+    Id: "0001"
+    Position: {"Lat": 55.7449006, "Lon": 37.6020183}
+    Name: ""    // везде пустое - возможно, для личной метки
+    Address: ""
 
+    TotalPlaces: 12,
+    TotalOrdinaryPlaces: 12
+    TotalElectricPlaces: 0
+    AvailableOrdinaryBikes: 2
+    AvailableElectricBikes: 0
+    FreePlaces: 10
+    FreeOrdinaryPlaces: 10
+    FreeElectricPlaces: 0
+
+    Похоже, OrdinaryPlaces и ElectricPlaces взаимозаменяемы, важно только общее число.  А вот велосипеды разные.
+    AvailableBikes может быть меньше, чем TotalPlaces-FreePlaces! Часть замков может быть неисправна.
+
+    StationTypes: ["ordinary"]
+    HasTerminal: false
+    IsLocked: false
+    IconsSet: 1
+    TemplateId: 6
+    IsFavourite: false
+*/
     public class Parking {
         int id;
         String name;
         String address;
         Double lat;
         Double lng;
-        int freePlaces;
         int totalPlaces;
+        int freePlaces;
+        int availableOrdinaryBikes;
+        int availableElectricBikes;
         boolean isLocked;
+
+        void fromJson(JSONObject parking) throws JSONException {
+            this.id = parking.getInt("Id");
+            this.address = parking.getString("Address");
+            this.name = this.address;
+            this.totalPlaces = parking.getInt("TotalPlaces");
+            this.freePlaces = parking.getInt("FreePlaces");
+            this.availableOrdinaryBikes = parking.getInt("AvailableOrdinaryBikes");
+            this.availableElectricBikes = parking.getInt("AvailableElectricBikes");
+            this.isLocked = parking.getBoolean("IsLocked");
+            JSONObject pos = parking.getJSONObject("Position");
+            this.lat = pos.getDouble("Lat");
+            this.lng = pos.getDouble("Lon");
+        }
+
         int getStateIconResource() {
             if (isLocked)
                 return R.drawable.marker_no_48;
@@ -113,17 +155,8 @@ public class ParkingList {
                 ArrayList<Parking> new_list = new ArrayList<> ();
                 for (int i=0; i < parking_list.length(); i++) {
                     JSONObject parking = parking_list.getJSONObject(i);
-
                     Parking p = new Parking();
-                    p.id = parking.getInt("Id");
-                    p.address = parking.getString("Address");
-                    p.name = p.address;
-                    p.freePlaces = parking.getInt("FreePlaces");
-                    p.totalPlaces = parking.getInt("TotalPlaces");
-                    p.isLocked = parking.getBoolean("IsLocked");
-                    JSONObject pos = parking.getJSONObject("Position");
-                    p.lat = pos.getDouble("Lat");
-                    p.lng = pos.getDouble("Lon");
+                    p.fromJson(parking);
                     new_list.add(p);
                 }
 
