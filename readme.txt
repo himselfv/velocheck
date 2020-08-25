@@ -13,3 +13,6 @@ https://developers.google.com/maps/documentation/android-sdk/get-api-key
 
 App signing (для релиза):
 https://developer.android.com/studio/publish/app-signing#generate-key
+
+Application ID:
+https://developer.android.com/studio/build/application-id
