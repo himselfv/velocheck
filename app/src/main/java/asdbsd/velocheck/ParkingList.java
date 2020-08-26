@@ -1,6 +1,7 @@
 package asdbsd.velocheck;
 
 import android.os.AsyncTask;
+import android.os.SystemClock;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -123,14 +124,21 @@ public class ParkingList {
 
 
     /*  Querying and parsing  */
-
     private String queryUrl = "https://velobike.ru/proxy/parkings/";
+
+    protected long lastUpdateStartTime = 0;
+    //True if there hasn't been an update initiated for more than expiryTimeout milliseconds
+    public boolean isDataOlderThan(long expiryTimeoutMsec) {
+        return (SystemClock.elapsedRealtime() - this.lastUpdateStartTime > expiryTimeoutMsec);
+    }
 
     void AsyncUpdate() {
         for (EventHandler handler : handlers)
             handler.onBeginUpdate();
+        this.lastUpdateStartTime = SystemClock.elapsedRealtime();
         new RetrieveParkingsTask().execute(queryUrl);
     }
+
 
     class RetrieveParkingsTask extends AsyncTask<String, Void, ArrayList<Parking>> {
         private Exception exception;

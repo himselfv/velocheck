@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         parkings.AsyncUpdate();
 
         //It's better to just store all shared info in the App (MainActivity can get unloaded
-        //indepentenly), but for now this'll suffice
+        //independently), but for now this'll suffice
         App app = (App) getApplicationContext();
         app.main = this;
 
@@ -110,6 +110,15 @@ public class MainActivity extends AppCompatActivity {
         initFinished = true;
         if (dataReceived) // might have missed it while init was not finished. Import manually.
             parkingsUpdated();
+    }
+
+    //Called when the activity is brought back to the front, including for the first time.
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //When the user reopens the app they expect the data to be fresh, so auto-update after a while.
+        if (parkings.isDataOlderThan(60000)) // 1 minute
+            parkings.AsyncUpdate();
     }
 
 
