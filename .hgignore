@@ -5,6 +5,7 @@ syntax:glob
 local.properties
 .DS_Store
 build
+app/release
 
 # The entire .idea folder is IDE settings.
 # Guides say "commit but ignore specific files", but almost everything is regenerable trash.

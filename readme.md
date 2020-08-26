@@ -13,3 +13,8 @@
 Нажали на иконку приложения - увидели свободные места.
 
 Один сетевой запрос.
+
+**[Скачать APK](https://drive.google.com/file/d/16UrZgPr1jCOLom40X1bSt46kXd_S_IHQ/view?usp=sharing)**
+
+[Старые версии](https://drive.google.com/drive/folders/137PijfDoqWC4pimnlbfmd0WemLnfjUUp?usp=sharing)
+
